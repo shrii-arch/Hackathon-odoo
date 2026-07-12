@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransitOps - Dashboard</title>
+    <link rel="stylesheet" href="dashboard-style.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-box"></div>
+                <h2>TransitOps</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active">Dashboard</a>
+                <a href="#" class="menu-item">Fleet</a>
+                <a href="#" class="menu-item">Drivers</a>
+                <a href="#" class="menu-item">Trips</a>
+                <a href="#" class="menu-item">Maintenance</a>
+                <a href="#" class="menu-item">Fuel & Expenses</a>
+                <a href="#" class="menu-item">Analytics</a>
+                <a href="#" class="menu-item">Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main-workspace">
+            
+            <header class="top-bar">
+                <div class="search-wrapper">
+                    <input type="text" placeholder="Search operations, assets or logs...">
+                </div>
+                <div class="user-profile-badge">
+                    <span id="profile-name">Raven K.</span>
+                    <span id="profile-role" class="role-tag">Dispatcher</span>
+                </div>
+            </header>
+
+            <section class="filter-strip">
+                <div class="filter-group">
+                    <label>Vehicle Type</label>
+                    <select id="filter-type">
+                        <option value="All">All Types</option>
+                        <option value="Van">Vans</option>
+                        <option value="Truck">Trucks</option>
+                        <option value="Mini">Minis</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="filter-status">
+                        <option value="All">All Statuses</option>
+                        <option value="Available">Available</option>
+                        <option value="On Trip">On Trip</option>
+                        <option value="In Shop">In Shop</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Region</label>
+                    <select id="filter-region">
+                        <option value="All">All Regions</option>
+                        <option value="East">East Zone</option>
+                        <option value="West">West Zone</option>
+                        <option value="North">North Zone</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="kpi-grid">
+                <div class="kpi-card border-blue">
+                    <h3>Active Vehicles</h3>
+                    <div class="kpi-value" id="kpi-active-vehicles">53</div>
+                </div>
+                <div class="kpi-card border-green">
+                    <h3>Available Vehicles</h3>
+                    <div class="kpi-value" id="kpi-available-vehicles">42</div>
+                </div>
+                <div class="kpi-card border-orange">
+                    <h3>In Maintenance</h3>
+                    <div class="kpi-value" id="kpi-in-shop">05</div>
+                </div>
+                <div class="kpi-card border-lightblue">
+                    <h3>Active Trips</h3>
+                    <div class="kpi-value" id="kpi-active-trips">18</div>
+                </div>
+                <div class="kpi-card border-purple">
+                    <h3>Pending Trips</h3>
+                    <div class="kpi-value" id="kpi-pending-trips">09</div>
+                </div>
+                <div class="kpi-card border-navy">
+                    <h3>Drivers On Duty</h3>
+                    <div class="kpi-value" id="kpi-drivers-duty">26</div>
+                </div>
+                <div class="kpi-card border-emerald">
+                    <h3>Fleet Utilization</h3>
+                    <div class="kpi-value" id="kpi-utilization">81%</div>
+                </div>
+            </section>
+
+            <div class="data-split-row">
+                
+                <div class="table-container">
+                    <h3>Recent Operations Lifecycle</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Trip ID</th>
+                                <th>Vehicle</th>
+                                <th>Driver</th>
+                                <th>Status</th>
+                                <th>ETA/Status Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trips-table-body">
+                            <tr>
+                                <td>TR001</td>
+                                <td>VAN-05</td>
+                                <td>Alex</td>
+                                <td><span class="badge status-ontrip">On Trip</span></td>
+                                <td>45 min</td>
+                            </tr>
+                            <tr>
+                                <td>TR002</td>
+                                <td>TRK-12</td>
+                                <td>John</td>
+                                <td><span class="badge status-completed">Completed</span></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>TR003</td>
+                                <td>MINI-08</td>
+                                <td>Priya</td>
+                                <td><span class="badge status-dispatched">Dispatched</span></td>
+                                <td>1h 10m</td>
+                            </tr>
+                            <tr>
+                                <td>TR004</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td><span class="badge status-draft">Draft</span></td>
+                                <td>Awaiting vehicle</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="status-distribution-panel">
+                    <h3>Vehicle Lifecycle Status</h3>
+                    <div class="stat-progress-group">
+                        <div class="progress-label"><span>Available</span><strong>42</strong></div>
+                        <div class="progress-bar-bg"><div class="progress-fill fill-green" style="width: 65%;"></div></div>
+                    </div>
+                    <div class="stat-progress-group">
+                        <div class="progress-label"><span>On Trip</span><strong>18</strong></div>
+                        <div class="progress-bar-bg"><div class="progress-fill fill-blue" style="width: 25%;"></div></div>
+                    </div>
+                    <div class="stat-progress-group">
+                        <div class="progress-label"><span>In Shop</span><strong>05</strong></div>
+                        <div class="progress-bar-bg"><div class="progress-fill fill-orange" style="width: 10%;"></div></div>
+                    </div>
+                    <div class="stat-progress-group">
+                        <div class="progress-label"><span>Retired</span><strong>0</strong></div>
+                        <div class="progress-bar-bg"><div class="progress-fill fill-red" style="width: 0%;"></div></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
