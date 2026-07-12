@@ -204,3 +204,26 @@ body, html {
 .scoped-info li {
     margin-bottom: 4px;
 }
+/* Styling for the New User toggle link */
+.toggle-container {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.toggle-container a {
+    font-size: 0.9rem;
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.toggle-container a:hover {
+    text-decoration: underline;
+}
+
+/* Disabled input state when an account gets locked out */
+input:disabled, select:disabled, button:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
