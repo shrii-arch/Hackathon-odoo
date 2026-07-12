@@ -19,7 +19,7 @@
                 <a href="#" class="menu-item active" data-target="dashboard-view">Dashboard</a>
                 <a href="#" class="menu-item" data-target="fleet-view">Fleet</a>
                 <a href="#" class="menu-item" data-target="drivers-view">Drivers</a>
-                <a href="#" class="menu-item">Trips</a>
+                <a href="#" class="menu-item" data-target="trips-view">Trips</a>
                 <a href="#" class="menu-item">Maintenance</a>
                 <a href="#" class="menu-item">Fuel & Expenses</a>
                 <a href="#" class="menu-item">Analytics</a>
@@ -66,9 +66,8 @@
                             <thead>
                                 <tr><th>Trip ID</th><th>Vehicle</th><th>Driver</th><th>Status</th><th>ETA Note</th></tr>
                             </thead>
-                            <tbody>
-                                <tr><td>TR001</td><td>VAN-05</td><td>Alex</td><td><span class="badge status-ontrip">On Trip</span></td><td>45 min</td></tr>
-                            </tbody>
+                            <tbody id="home-trips-body">
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -105,8 +104,7 @@
                                 <thead>
                                     <tr><th>Asset / ID</th><th>Reg Code</th><th>Type</th><th>Fuel</th><th>Cap / Seats</th><th>Odometer</th><th>Cost</th><th>Status</th><th>Action</th></tr>
                                 </thead>
-                                <tbody id="vehicle-list-body">
-                                </tbody>
+                                <tbody id="vehicle-list-body"></tbody>
                             </table>
                         </div>
                     </div>
@@ -115,42 +113,20 @@
 
             <div id="drivers-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
-                    
                     <div class="crud-form-card">
                         <h3>Onboard New Operator</h3>
                         <form id="driver-form">
                             <div class="form-input-grid">
-                                <div class="input-group">
-                                    <label for="d-name">Driver Full Name</label>
-                                    <input type="text" id="d-name" placeholder="e.g., Suresh Kumar" required>
-                                </div>
-                                <div class="input-group">
-                                    <label for="d-phone">Contact Number</label>
-                                    <input type="tel" id="d-phone" placeholder="e.g., 98765XXXXX" required>
-                                </div>
+                                <div class="input-group"><label for="d-name">Driver Full Name</label><input type="text" id="d-name" required></div>
+                                <div class="input-group"><label for="d-phone">Contact Number</label><input type="tel" id="d-phone" required></div>
                             </div>
                             <div class="form-input-grid">
-                                <div class="input-group">
-                                    <label for="d-license">License Number</label>
-                                    <input type="text" id="d-license" placeholder="e.g., DL-90045" required>
-                                </div>
-                                <div class="input-group">
-                                    <label for="d-expiry">License Expiry Date</label>
-                                    <input type="date" id="d-expiry" required>
-                                </div>
+                                <div class="input-group"><label for="d-license">License Number</label><input type="text" id="d-license" required></div>
+                                <div class="input-group"><label for="d-expiry">License Expiry Date</label><input type="date" id="d-expiry" required></div>
                             </div>
                             <div class="form-input-grid">
-                                <div class="input-group">
-                                    <label for="d-category">License Category</label>
-                                    <select id="d-category" required>
-                                        <option value="LMV">LMV (Light Motor Vehicle)</option>
-                                        <option value="HMV">HMV (Heavy Motor Vehicle)</option>
-                                    </select>
-                                </div>
-                                <div class="input-group">
-                                    <label for="d-score">Safety Score (%)</label>
-                                    <input type="number" id="d-score" placeholder="e.g., 95" min="0" max="100" required>
-                                </div>
+                                <div class="input-group"><label for="d-category">License Category</label><select id="d-category" required><option value="LMV">LMV</option><option value="HMV">HMV</option></select></div>
+                                <div class="input-group"><label for="d-score">Safety Score (%)</label><input type="number" id="d-score" min="0" max="100" required></div>
                             </div>
                             <div class="input-group">
                                 <label for="d-status">Duty Operational Status</label>
@@ -164,34 +140,81 @@
                             <button type="submit" class="btn-action-submit">Onboard Driver</button>
                         </form>
                     </div>
-
-        <div class="crud-table-card">
-            <h3>Registered Drivers</h3>
-            <div class="table-responsive-wrapper">
-               <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Driver Name</th>
-                            <th>License Number</th>
-                            <th>Category</th>
-                            <th>Expiry Threshold</th>
-                            <th>Contact Node</th>
-                            <th>Safety Index</th>
-                            <th>Status Badge</th>
-                            <th>Action Log</th>
-                        </tr>
-                    </thead>
-                    <tbody id="driver-list-body">
-                            <!-- Driver rows will be populated by JavaScript -->
-                        </tbody>
-                </table>
+                    <div class="crud-table-card">
+                        <h3>Active Safety Profiles Ledger</h3>
+                        <div class="table-responsive-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Driver Name</th><th>License Number</th><th>Category</th><th>Expiry Threshold</th><th>Contact Node</th><th>Safety Index</th><th>Status Badge</th><th>Action Log</th></tr>
+                                </thead>
+                                <tbody id="driver-list-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
+            <div id="trips-view" class="view-section" style="display: none;">
+                <div class="crud-layout-row">
+                    
+                    <div class="crud-form-card">
+                        <h3>Create Trip</h3>
+                        <form id="trip-form">
+                            <div class="input-group">
+                                <label for="t-source">Source Hub</label>
+                                <input type="text" id="t-source" placeholder="e.g., Gandhinagar Depot" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="t-destination">Destination Hub</label>
+                                <input type="text" id="t-destination" placeholder="e.g., Ahmedabad Hub" required>
+                            </div>
+                            <div class="form-input-grid">
+                                <div class="input-group">
+                                    <label for="t-vehicle">Vehicle (Available Only)</label>
+                                    <select id="t-vehicle" required>
+                                        <option value="">-- Select Active Fleet --</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label for="t-driver">Driver (Available Only)</label>
+                                    <select id="t-driver" required>
+                                        <option value="">-- Select Operator --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-input-grid">
+                                <div class="input-group">
+                                    <label for="t-weight">Cargo Weight (kg)</label>
+                                    <input type="number" id="t-weight" placeholder="e.g., 700" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="t-distance">Planned Distance (km)</label>
+                                    <input type="number" id="t-distance" placeholder="e.g., 38" required>
+                                </div>
+                            </div>
+
+                            <div id="capacity-alert-banner" class="alert-banner-danger" style="display: none;">
+                                <strong>Overload Warning:</strong> Cargo weight exceeds selected asset limit! Dispatch pipeline blocked.
+                            </div>
+
+                            <div style="display: flex; gap: 12px; margin-top: 15px;">
+                                <button type="submit" id="btn-dispatch-submit" class="btn-action-submit" style="flex: 2;">Dispatch Vehicle</button>
+                                <button type="button" id="btn-dispatch-cancel" class="btn-action-secondary" style="flex: 1;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="crud-table-card">
+                        <h3>Live Board Ledger</h3>
+                        <div id="live-board-container" class="live-board-grid">
+                            </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
     </div>
-    
- </main>
- </div>
 
     <script src="dashboard.js"></script>
 </body>
