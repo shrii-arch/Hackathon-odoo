@@ -183,48 +183,118 @@
 
             </div>
 
-            <div id="drivers-view" class="view-section" style="display: none;">
-                <div class="crud-layout-row">
-                    <div class="crud-form-card">
-                        <h3>Onboard New Operator</h3>
-                        <form id="driver-form">
-                            <div class="form-input-grid">
-                                <div class="input-group"><label for="d-name">Driver Full Name</label><input type="text" id="d-name" required></div>
-                                <div class="input-group"><label for="d-phone">Contact Number</label><input type="tel" id="d-phone" required></div>
-                            </div>
-                            <div class="form-input-grid">
-                                <div class="input-group"><label for="d-license">License Number</label><input type="text" id="d-license" required></div>
-                                <div class="input-group"><label for="d-expiry">License Expiry Date</label><input type="date" id="d-expiry" required></div>
-                            </div>
-                            <div class="form-input-grid">
-                                <div class="input-group"><label for="d-category">License Category</label><select id="d-category" required><option value="LMV">LMV</option><option value="HMV">HMV</option></select></div>
-                                <div class="input-group"><label for="d-score">Safety Score (%)</label><input type="number" id="d-score" min="0" max="100" required></div>
-                            </div>
-                            <div class="input-group">
-                                <label for="d-status">Duty Operational Status</label>
-                                <select id="d-status" required>
-                                    <option value="Available">Available</option>
-                                    <option value="On Trip">On Trip</option>
-                                    <option value="Off Duty">Off Duty</option>
-                                    <option value="Suspended">Suspended</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn-action-submit">Onboard Driver</button>
-                        </form>
+            <!-- VIEW 3: DRIVERS WORKSPACE -->
+<div id="drivers-view" class="view-section" style="display: none;">
+    
+    <!-- Top Action Bar Matching Mockup UI Layout -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px;">
+        <!-- Filter Toggle Pills -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Toggle Status:</span>
+            <select id="filter-driver-status" style="padding: 8px 16px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: #ffffff; cursor: pointer; min-width: 160px; font-weight: 500;">
+                <option value="All">All Operators</option>
+                <option value="Available">Available</option>
+                <option value="On Trip">On Trip</option>
+                <option value="Off Duty">Off Duty</option>
+                <option value="Suspended">Suspended</option>
+            </select>
+        </div>
+
+        <!-- Dynamic View Switches -->
+        <div style="display: flex; gap: 12px;" id="driver-tab-controller">
+            <button class="driver-sub-tab active" data-sub="driver-matrix-pane" style="padding: 8px 16px; background: #e2e8f0; border: none; border-radius: 6px; font-weight: 600; font-size: 0.9rem; cursor: pointer; color: #1e293b;">Driver Ledger</button>
+            <button class="driver-sub-tab" data-sub="driver-form-pane" style="padding: 8px 16px; background: #eab308; border: none; border-radius: 6px; font-weight: 600; font-size: 0.9rem; cursor: pointer; color: #ffffff;">+ Add Driver</button>
+        </div>
+    </div>
+
+    <!-- SUB-PANE A: DRIVERS MATRIX LEDGER -->
+    <div id="driver-matrix-pane" class="driver-pane">
+        <div class="crud-table-card" style="width: 100%; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px;">
+            <div class="table-responsive-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Driver Name</th>
+                            <th>License Number</th>
+                            <th>Category</th>
+                            <th>Expiry Threshold</th>
+                            <th>Contact Node</th>
+                            <th>Safety Index</th>
+                            <th>Status Badge</th>
+                            <th>Action Log</th>
+                        </tr>
+                    </thead>
+                    <tbody id="driver-list-body"></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Regulatory Mock Rule Notice Placement -->
+        <p style="margin-top: 15px; font-size: 0.85rem; color: #e11d48; font-style: italic; font-weight: 500;">
+            * Rule: Expired license or Suspended status &rarr; blocked from trip assignment.
+        </p>
+    </div>
+
+    <!-- SUB-PANE B: ONBOARD NEW OPERATOR FORM VIEW -->
+    <div id="driver-form-pane" class="driver-pane" style="display: none; padding: 10px 0;">
+        <div class="crud-form-card" style="max-width: 650px; margin: 0 auto; background: #ffffff; padding: 35px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <h3 style="margin-top: 0; margin-bottom: 28px; color: #1e293b; font-size: 1.25rem; font-weight: 600; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">Onboard New Operator</h3>
+            <form id="driver-form" style="display: flex; flex-direction: column; gap: 24px;">
+                <!-- Row 1 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="d-name" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Driver Full Name</label>
+                        <input type="text" id="d-name" required placeholder="e.g. Alex" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;">
                     </div>
-                    <div class="crud-table-card">
-                        <h3>Active Safety Profiles Ledger</h3>
-                        <div class="table-responsive-wrapper">
-                            <table class="data-table">
-                                <thead>
-                                    <tr><th>Driver Name</th><th>License Number</th><th>Category</th><th>Expiry Threshold</th><th>Contact Node</th><th>Safety Index</th><th>Status Badge</th><th>Action Log</th></tr>
-                                </thead>
-                                <tbody id="driver-list-body"></tbody>
-                            </table>
-                        </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="d-phone" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Contact Number</label>
+                        <input type="tel" id="d-phone" required placeholder="e.g. 98765XXXXX" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;">
                     </div>
                 </div>
-            </div>
+                <!-- Row 2 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="d-license" style="font-size: 0.85rem; font-weight: 500; color: #475569;">License Number</label>
+                        <input type="text" id="d-license" required placeholder="e.g. DL-88213" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="d-expiry" style="font-size: 0.85rem; font-weight: 500; color: #475569;">License Expiry Date</label>
+                        <input type="date" id="d-expiry" required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none; background: #fff;">
+                    </div>
+                </div>
+                <!-- Row 3 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="d-category" style="font-size: 0.85rem; font-weight: 500; color: #475569;">License Category</label>
+                        <select id="d-category" required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: #fff; outline: none;">
+                            <option value="LMV">LMV</option>
+                            <option value="HMV">HMV</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="d-score" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Safety Score (%)</label>
+                        <input type="number" id="d-score" min="0" max="100" required placeholder="e.g. 96" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;">
+                    </div>
+                </div>
+                <!-- Row 4 -->
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="d-status" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Duty Operational Status</label>
+                    <select id="d-status" required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: #fff; outline: none;">
+                        <option value="Available">Available</option>
+                        <option value="On Trip">On Trip</option>
+                        <option value="Off Duty">Off Duty</option>
+                        <option value="Suspended">Suspended</option>
+                    </select>
+                </div>
+                <!-- Submit Action -->
+                <div style="margin-top: 10px;">
+                    <button type="submit" class="btn-action-submit" style="width: 100%; padding: 12px; background-color: #1e293b; color: #ffffff; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer;">
+                        Onboard Driver
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
             <div id="trips-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">

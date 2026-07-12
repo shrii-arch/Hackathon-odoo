@@ -201,26 +201,34 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
 
     function renderDriverTable() {
-        if (!driverListBody) return;
-        driverListBody.innerHTML = "";
-        driverDatabase.forEach(function(driver, index) {
-            const rowHTML = `
-                <tr>
-                    <td><strong>${driver.name}</strong></td>
-                    <td><code>${driver.license}</code></td>
-                    <td><span class="role-tag">${driver.category}</span></td>
-                    <td>${driver.expiry}</td>
-                    <td>${driver.phone}</td>
-                    <td><div style="font-weight:bold; color: ${driver.score >= 90 ? '#10b981' : '#f59e0b'}">${driver.score}%</div></td>
-                    <td><span class="badge ${getDriverStatusClass(driver.status)}">${driver.status}</span></td>
-                    <td><button class="btn-delete-row delete-driver" data-index="${index}">Remove</button></td>
-                </tr>
-            `;
-            driverListBody.innerHTML += rowHTML;
-        });
-        localStorage.setItem('transitops_drivers', JSON.stringify(driverDatabase));
-        updateTopKPIGrid();
-    }
+    if (!driverListBody) return;
+    driverListBody.innerHTML = "";
+    
+    // Read the value from our mockup status selector dropdown
+    const filterDriverStatus = document.getElementById('filter-driver-status');
+    const selectedStatus = filterDriverStatus ? filterDriverStatus.value : "All";
+    
+    driverDatabase.forEach(function(driver, index) {
+        // Filter logic matching the mockup layout state
+        if (selectedStatus !== "All" && driver.status !== selectedStatus) return;
+
+        const rowHTML = `
+            <tr>
+                <td><strong>${driver.name}</strong></td>
+                <td><code>${driver.license}</code></td>
+                <td><span class="role-tag">${driver.category}</span></td>
+                <td>${driver.expiry}</td>
+                <td>${driver.phone}</td>
+                <td><div style="font-weight:bold; color: ${driver.score >= 90 ? '#10b981' : '#f59e0b'}">${driver.score}%</div></td>
+                <td><span class="badge ${getDriverStatusClass(driver.status)}">${driver.status}</span></td>
+                <td><button class="btn-delete-row delete-driver" data-index="${index}">Remove</button></td>
+            </tr>
+        `;
+        driverListBody.innerHTML += rowHTML;
+    });
+    localStorage.setItem('transitops_drivers', JSON.stringify(driverDatabase));
+    if (typeof updateTopKPIGrid === "function") updateTopKPIGrid();
+}
 
     if (driverForm) {
         driverForm.addEventListener('submit', function(e) {
@@ -241,8 +249,51 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             driverForm.reset();
             renderDriverTable();
+            // Return view to main database grid upon complete entry
+        const ledgerTab = document.querySelector('[data-sub="driver-matrix-pane"]');
+        if (ledgerTab) ledgerTab.click();
         });
     }
+// ==========================================
+// DRIVER INTERNAL SUB-TAB & FILTER CONTROLLER
+// ==========================================
+const driverSubTabs = document.querySelectorAll('.driver-sub-tab');
+const driverPanes = document.querySelectorAll('.driver-pane');
+const filterDriverStatus = document.getElementById('filter-driver-status');
+
+driverSubTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+        driverSubTabs.forEach(t => {
+            t.classList.remove('active');
+            if(t.getAttribute('data-sub') === 'driver-form-pane') {
+                t.style.background = '#eab308';
+                t.style.color = '#ffffff';
+            } else {
+                t.style.background = '#e2e8f0';
+                t.style.color = '#1e293b';
+            }
+        });
+        
+        this.classList.add('active');
+        this.style.background = '#1e293b';
+        this.style.color = '#ffffff';
+
+        const activePaneId = this.getAttribute('data-sub');
+        driverPanes.forEach(pane => {
+            pane.style.display = (pane.id === activePaneId) ? 'block' : 'none';
+        });
+
+        if (activePaneId === 'driver-matrix-pane') {
+            renderDriverTable();
+        }
+    });
+});
+
+// Watch for layout filter dropdown changes
+if (filterDriverStatus) {
+    filterDriverStatus.removeEventListener('change', renderDriverTable); // Avoid double-binding
+    filterDriverStatus.addEventListener('change', renderDriverTable);
+}
 
     // ==========================================
     // 6. TRIP MANAGEMENT & LOGISTICS ENGINE
