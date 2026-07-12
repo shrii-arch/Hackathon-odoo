@@ -36,9 +36,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 section.style.display = (section.id === targetId) ? "block" : "none";
             });
 
-            // Re-sync asset drops whenever switching into operations window
             if (targetId === 'trips-view') {
                 populateDispatchDropdowns();
+            }
+            if (targetId === 'maintenance-view') {
+                populateMaintenanceDropdown();
+                renderMaintenanceTable();
             }
         });
     });
@@ -102,6 +105,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    if (vehicleListBody) {
+        vehicleListBody.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-vehicle')) {
+                const index = e.target.getAttribute('data-index');
+                if (confirm("De-register this active fleet asset permanently?")) {
+                    fleetDatabase.splice(index, 1);
+                    renderFleetTable();
+                }
+            }
+        });
+    }
+
     // ==========================================
     // 4. DRIVER MANAGEMENT SYSTEM
     // ==========================================
@@ -136,8 +151,42 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('transitops_drivers', JSON.stringify(driverDatabase));
     }
 
+    if (driverForm) {
+        driverForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const inputLicense = document.getElementById('d-license').value.trim().toUpperCase();
+            if (driverDatabase.find(d => d.license === inputLicense)) {
+                alert("Operational Error: A driver profile with this License Number already exists.");
+                return;
+            }
+            driverDatabase.push({
+                name: document.getElementById('d-name').value.trim(),
+                phone: document.getElementById('d-phone').value.trim(),
+                license: inputLicense,
+                expiry: document.getElementById('d-expiry').value,
+                category: document.getElementById('d-category').value,
+                score: parseInt(document.getElementById('d-score').value),
+                status: document.getElementById('d-status').value
+            });
+            driverForm.reset();
+            renderDriverTable();
+        });
+    }
+
+    if (driverListBody) {
+        driverListBody.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-driver')) {
+                const index = e.target.getAttribute('data-index');
+                if (confirm("Permanently archive this operator safety profile layout?")) {
+                    driverDatabase.splice(index, 1);
+                    renderDriverTable();
+                }
+            }
+        });
+    }
+
     // ==========================================
-    // 5. TRIP MANAGEMENT & LOGISTICS ENGINE (NEW)
+    // 5. TRIP MANAGEMENT & LOGISTICS ENGINE
     // ==========================================
     const tripForm = document.getElementById('trip-form');
     const vehicleSelect = document.getElementById('t-vehicle');
@@ -150,32 +199,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let tripsDatabase = JSON.parse(localStorage.getItem('transitops_trips')) || [
         { id: "TR001", source: "Gandhinagar Depot", destination: "Ahmedabad Hub", vehicle: "VAN-05", driver: "Alex", weight: 450, distance: 38, status: "Dispatched", note: "45 min" },
-        { id: "TR002", source: "Vatva Industrial Area", destination: "Sanand Warehouse", vehicle: "TRUCK-04", driver: "Suresh", weight: 2000, distance: 55, status: "Draft", note: "Awaiting driver" },
-        { id: "TR003", source: "Mansa Depot", destination: "Kalol Depot", vehicle: "Unassigned", driver: "Unassigned", weight: 0, distance: 22, status: "Cancelled", note: "Vehicle went to shop" }
+        { id: "TR002", source: "Vatva Industrial Area", destination: "Sanand Warehouse", vehicle: "TRUCK-11", driver: "Priya", weight: 2000, distance: 55, status: "Draft", note: "Awaiting driver" }
     ];
 
     function populateDispatchDropdowns() {
         if (!vehicleSelect || !driverSelect) return;
         
-        // Populate Available Fleet options
         vehicleSelect.innerHTML = '<option value="">-- Select Active Fleet --</option>';
         fleetDatabase.filter(v => v.status === "Available").forEach(v => {
+            // FIX: Repaired missing backtick closure error sequence here
             vehicleSelect.innerHTML += `<option value="${v.id}" data-cap="${v.capacity}">${v.id} (Max: ${v.capacity}kg)</option>`;
         });
 
-        // Populate Available Operator options
         driverSelect.innerHTML = '<option value="">-- Select Operator --</option>';
         driverDatabase.filter(d => d.status === "Available").forEach(d => {
             driverSelect.innerHTML += `<option value="${d.name}">${d.name} (Score: ${d.score}%)</option>`;
         });
     }
 
-    // Live validation loop tracking capacity violations
     function checkCapacityValidation() {
         const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
         if (!selectedOption || !selectedOption.value || !cargoWeightInput.value) {
-            capacityAlertBanner.style.display = "none";
-            btnDispatchSubmit.disabled = false;
+            if (capacityAlertBanner) capacityAlertBanner.style.display = "none";
+            if (btnDispatchSubmit) {
+                btnDispatchSubmit.disabled = false;
+                btnDispatchSubmit.style.opacity = "1";
+                btnDispatchSubmit.style.cursor = "pointer";
+            }
             return;
         }
 
@@ -208,7 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const selectedDriver = driverSelect.value;
             const generatedId = "TR00" + (tripsDatabase.length + 1);
 
-            // Append new transaction structure into core array records
             tripsDatabase.push({
                 id: generatedId,
                 source: document.getElementById('t-source').value.trim(),
@@ -221,18 +270,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 note: "Just launched"
             });
 
-            // Update underlying statuses to maintain single source of truth across components
             const vehicleObj = fleetDatabase.find(v => v.id === selectedVehicle);
             if (vehicleObj) vehicleObj.status = "On Trip";
 
             const driverObj = driverDatabase.find(d => d.name === selectedDriver);
             if (driverObj) driverObj.status = "On Trip";
 
-            // Clean, persist, and update view components
             tripForm.reset();
-            capacityAlertBanner.style.display = "none";
-            btnDispatchSubmit.disabled = false;
-            btnDispatchSubmit.style.opacity = "1";
+            if (capacityAlertBanner) capacityAlertBanner.style.display = "none";
             
             localStorage.setItem('transitops_fleet', JSON.stringify(fleetDatabase));
             localStorage.setItem('transitops_drivers', JSON.stringify(driverDatabase));
@@ -248,7 +293,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!liveBoardContainer) return;
         liveBoardContainer.innerHTML = "";
         
-        // Loop execution loading customized Live Cards block metrics
         tripsDatabase.forEach((trip, index) => {
             const cardHTML = `
                 <div class="live-board-card">
@@ -262,7 +306,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p class="log-meta">📦 Cargo: ${trip.weight} kg | 🛣️ Route: ${trip.distance} km</p>
                         ${trip.note ? `<p class="eta-note">⏱️ <em>Note: ${trip.note}</em></p>` : ''}
                     </div>
-                    
                     <div class="card-actions-row">
                         <select class="status-pipeline-select" data-index="${index}">
                             <option value="Draft" ${trip.status === 'Draft' ? 'selected' : ''}>Draft</option>
@@ -280,7 +323,6 @@ document.addEventListener('DOMContentLoaded', function() {
         renderMirrorHomeDashboard();
     }
 
-    // Mirroring functions updating global overview grids component parameters
     function renderMirrorHomeDashboard() {
         if (!homeTripsBody) return;
         homeTripsBody.innerHTML = "";
@@ -297,7 +339,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Dynamic state listener monitoring lifecycle status upgrades
     if (liveBoardContainer) {
         liveBoardContainer.addEventListener('change', function(e) {
             if (e.target.classList.contains('status-pipeline-select')) {
@@ -305,7 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const newStatus = e.target.value;
                 const activeTrip = tripsDatabase[index];
 
-                // Business Logic Cleanup: Release locked vehicles/drivers back to fleet upon trip conclusion
                 if (newStatus === "Completed" || newStatus === "Cancelled") {
                     const vehicleObj = fleetDatabase.find(v => v.id === activeTrip.vehicle);
                     if (vehicleObj) vehicleObj.status = "Available";
@@ -329,6 +369,105 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ==========================================
+    // 6. VEHICLE MAINTENANCE LOGS MODULE
+    // ==========================================
+    const maintenanceForm = document.getElementById('maintenance-form');
+    const maintenanceVehicleSelect = document.getElementById('m-vehicle');
+    const maintenanceListBody = document.getElementById('maintenance-list-body');
+
+    let maintenanceDatabase = JSON.parse(localStorage.getItem('transitops_maintenance')) || [
+        { vehicle: "VAN-05", type: "Oil Change", cost: 2500, date: "2026-07-07", status: "In Shop" },
+        { vehicle: "TRUCK-11", type: "Engine Repair", cost: 18000, date: "2026-07-05", status: "Completed" },
+        { vehicle: "MINI-03", type: "Tyre Replace", cost: 6200, date: "2026-07-06", status: "In Shop" }
+    ];
+
+    function populateMaintenanceDropdown() {
+        if (!maintenanceVehicleSelect) return;
+        maintenanceVehicleSelect.innerHTML = '<option value="">-- Select Fleet Asset --</option>';
+        fleetDatabase.forEach(v => {
+            maintenanceVehicleSelect.innerHTML += `<option value="${v.id}">${v.id} (${v.status})</option>`;
+        });
+    }
+
+    function renderMaintenanceTable() {
+        if (!maintenanceListBody) return;
+        maintenanceListBody.innerHTML = "";
+        
+        maintenanceDatabase.forEach((item, index) => {
+            const rowHTML = `
+                <tr>
+                    <td><strong>${item.vehicle}</strong></td>
+                    <td>${item.type}</td>
+                    <td>₹${item.cost ? item.cost.toLocaleString() : '0'}</td>
+                    <td>
+                        <select class="maintenance-state-select status-badge ${item.status === 'Completed' ? 'status-completed' : 'status-orange'}" data-index="${index}">
+                            <option value="In Shop" ${item.status === 'In Shop' ? 'selected' : ''}>In Shop</option>
+                            <option value="Completed" ${item.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                    </td>
+                </tr>
+            `;
+            maintenanceListBody.innerHTML += rowHTML;
+        });
+        localStorage.setItem('transitops_maintenance', JSON.stringify(maintenanceDatabase));
+    }
+
+    if (maintenanceForm) {
+        maintenanceForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const targetVehicleId = maintenanceVehicleSelect.value;
+            const recordStatus = document.getElementById('m-status').value;
+
+            maintenanceDatabase.push({
+                vehicle: targetVehicleId,
+                type: document.getElementById('m-type').value.trim(),
+                cost: parseInt(document.getElementById('m-cost').value),
+                date: document.getElementById('m-date').value,
+                status: recordStatus
+            });
+
+            const targetedFleetAsset = fleetDatabase.find(v => v.id === targetVehicleId);
+            if (targetedFleetAsset) {
+                targetedFleetAsset.status = (recordStatus === "In Shop") ? "In Shop" : "Available";
+            }
+
+            maintenanceForm.reset();
+            localStorage.setItem('transitops_fleet', JSON.stringify(fleetDatabase));
+            
+            renderFleetTable();
+            populateMaintenanceDropdown();
+            renderMaintenanceTable();
+        });
+    }
+
+    if (maintenanceListBody) {
+        maintenanceListBody.addEventListener('change', function(e) {
+            if (e.target.classList.contains('maintenance-state-select')) {
+                const index = e.target.getAttribute('data-index');
+                const targetNewStatus = e.target.value;
+                const targetLogRecord = maintenanceDatabase[index];
+
+                targetLogRecord.status = targetNewStatus;
+
+                const targetedFleetAsset = fleetDatabase.find(v => v.id === targetLogRecord.vehicle);
+                if (targetedFleetAsset) {
+                    targetedFleetAsset.status = (targetNewStatus === "In Shop") ? "In Shop" : "Available";
+                }
+
+                localStorage.setItem('transitops_fleet', JSON.stringify(fleetDatabase));
+                
+                renderFleetTable();
+                populateMaintenanceDropdown();
+                renderMaintenanceTable();
+            }
+        });
+    }
+
+    // ==========================================
+    // 7. UTILITY HELPER FUNCTIONS
+    // ==========================================
     function getTripBadgeClass(status) {
         if (status === "Draft") return "status-draft";
         if (status === "Dispatched") return "status-ontrip";
@@ -336,6 +475,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return "status-suspended";
     }
 
+    // Fixed mapping handling color values dynamically
     function getStatusClass(status) {
         if (status === "Available") return "status-completed";
         if (status === "On Trip") return "status-ontrip";
@@ -350,9 +490,13 @@ document.addEventListener('DOMContentLoaded', function() {
         return "status-suspended";
     }
 
-    // Global Registry Boot Execution loop
+    // ==========================================
+    // 8. GLOBAL RENDER ENGINE BOOT INITIALIZATION
+    // ==========================================
     renderFleetTable();
     renderDriverTable();
     populateDispatchDropdowns();
     renderTripsManagement();
+    populateMaintenanceDropdown();
+    renderMaintenanceTable();
 });

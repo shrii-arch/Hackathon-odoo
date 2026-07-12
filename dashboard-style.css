@@ -446,3 +446,25 @@ input[type="date"] {
 .btn-action-secondary:hover {
     background-color: #cbd5e1;
 }
+/* Interactive Maintenance Dropdown Badges */
+select.maintenance-state-select {
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+select.maintenance-state-select.status-orange {
+    background-color: #ffedd5;
+    color: #ea580c;
+    border-color: #fed7aa;
+}
+
+select.maintenance-state-select.status-completed {
+    background-color: #d1fae5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
