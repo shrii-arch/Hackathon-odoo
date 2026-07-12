@@ -320,3 +320,21 @@ body, html {
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
+/* Inline form input field pairs alignment */
+.form-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* Horizontal scroll handler if tables contain many tracking column headings */
+.table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Make font sizes tighter to prevent wrapping on dense data sets */
+.data-table th, .data-table td {
+    padding: 10px 8px;
+    font-size: 0.82rem;
+}
