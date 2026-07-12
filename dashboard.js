@@ -36,9 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 section.style.display = (section.id === targetId) ? "block" : "none";
             });
 
-            if (targetId === 'trips-view') {
-                populateDispatchDropdowns();
-            }
+            if (targetId === 'trips-view') populateDispatchDropdowns();
             if (targetId === 'maintenance-view') {
                 populateMaintenanceDropdown();
                 renderMaintenanceTable();
@@ -46,6 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (targetId === 'fuel-view') {
                 populateExpenseDropdown();
                 renderExpenseTable();
+            }
+            if (targetId === 'analytics-view') {
+                renderAnalyticsView();
+            }
+            if (targetId === 'settings-view') {
+                loadSystemSettings();
             }
         });
     });
@@ -66,8 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderFleetTable() {
         if (!vehicleListBody) return;
         vehicleListBody.innerHTML = "";
+        const currencySymbol = getGlobalCurrencySymbol();
+        
         fleetDatabase.forEach(function(vehicle, index) {
             const formattedCost = vehicle.cost ? Number(vehicle.cost).toLocaleString() : '0';
+            const distanceUnit = getGlobalDistanceUnit();
+            
             const rowHTML = `
                 <tr>
                     <td><strong>${vehicle.id}</strong></td>
@@ -75,8 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${vehicle.type}</td>
                     <td>${vehicle.fuel}</td>
                     <td>${vehicle.capacity}kg</td>
-                    <td>${vehicle.odometer} km</td>
-                    <td>₹${formattedCost}</td>
+                    <td>${vehicle.odometer} ${distanceUnit}</td>
+                    <td>${currencySymbol}${formattedCost}</td>
                     <td><span class="badge ${getStatusClass(vehicle.status)}">${vehicle.status}</span></td>
                     <td><button class="btn-delete-row delete-vehicle" data-index="${index}">Remove</button></td>
                 </tr>
@@ -84,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
             vehicleListBody.innerHTML += rowHTML;
         });
         localStorage.setItem('transitops_fleet', JSON.stringify(fleetDatabase));
+        updateTopKPIGrid();
     }
 
     if (vehicleForm) {
@@ -154,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
             driverListBody.innerHTML += rowHTML;
         });
         localStorage.setItem('transitops_drivers', JSON.stringify(driverDatabase));
+        updateTopKPIGrid();
     }
 
     if (driverForm) {
@@ -161,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const inputLicense = document.getElementById('d-license').value.trim().toUpperCase();
             if (driverDatabase.find(d => d.license === inputLicense)) {
-                alert("Operational Error: A driver profile with this License Number already exists.");
+                alert("Operational Error: Driver profile with this License Number already exists.");
                 return;
             }
             driverDatabase.push({
@@ -186,7 +196,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const driverSelect = document.getElementById('t-driver');
     const cargoWeightInput = document.getElementById('t-weight');
     const capacityAlertBanner = document.getElementById('capacity-alert-banner');
-    const btnDispatchSubmit = document.getElementById('btn-dispatch-submit');
     const liveBoardContainer = document.getElementById('live-board-container');
     const homeTripsBody = document.getElementById('home-trips-body');
 
@@ -199,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!vehicleSelect || !driverSelect) return;
         vehicleSelect.innerHTML = '<option value="">-- Select Active Fleet --</option>';
         fleetDatabase.filter(v => v.status === "Available").forEach(v => {
-            vehicleSelect.innerHTML += `<option value="${v.id}" data-cap="${v.capacity}">${v.id} (Max: ${v.capacity}kg)</option>`;
+            vehicleSelect.innerHTML += `<option value="${v.id}" data-cap="${v.capacity}">${v.id} (Max: ${v.capacity}kg)</option>';`;
         });
         driverSelect.innerHTML = '<option value="">-- Select Operator --</option>';
         driverDatabase.filter(d => d.status === "Available").forEach(d => {
@@ -221,6 +230,122 @@ document.addEventListener('DOMContentLoaded', function() {
     if (vehicleSelect && cargoWeightInput) {
         vehicleSelect.addEventListener('change', checkCapacityValidation);
         cargoWeightInput.addEventListener('input', checkCapacityValidation);
+    }
+
+    if (tripForm) {
+        tripForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const selectedVehicle = vehicleSelect.value;
+            const selectedDriver = driverSelect.value;
+            const generatedId = "TR00" + (tripsDatabase.length + 1);
+
+            tripsDatabase.push({
+                id: generatedId,
+                source: document.getElementById('t-source').value.trim(),
+                destination: document.getElementById('t-destination').value.trim(),
+                vehicle: selectedVehicle,
+                driver: selectedDriver,
+                weight: parseInt(cargoWeightInput.value),
+                distance: parseInt(document.getElementById('t-distance').value),
+                status: "Dispatched",
+                note: "Just launched"
+            });
+
+            const vehicleObj = fleetDatabase.find(v => v.id === selectedVehicle);
+            if (vehicleObj) vehicleObj.status = "On Trip";
+
+            const driverObj = driverDatabase.find(d => d.name === selectedDriver);
+            if (driverObj) driverObj.status = "On Trip";
+
+            tripForm.reset();
+            if (capacityAlertBanner) capacityAlertBanner.style.display = "none";
+            
+            localStorage.setItem('transitops_fleet', JSON.stringify(fleetDatabase));
+            localStorage.setItem('transitops_drivers', JSON.stringify(driverDatabase));
+            
+            renderFleetTable();
+            renderDriverTable();
+            populateDispatchDropdowns();
+            renderTripsManagement();
+        });
+    }
+
+    function renderTripsManagement() {
+        if (!liveBoardContainer) return;
+        liveBoardContainer.innerHTML = "";
+        const distanceUnit = getGlobalDistanceUnit();
+        
+        tripsDatabase.forEach((trip, index) => {
+            liveBoardContainer.innerHTML += `
+                <div class="live-board-card">
+                    <div class="card-header-row">
+                        <span class="trip-id-tag"><strong>${trip.id}</strong></span>
+                        <span class="badge ${getTripBadgeClass(trip.status)}">${trip.status}</span>
+                    </div>
+                    <div class="route-details">
+                        <p class="route-text">📍 <strong>${trip.source}</strong> &rarr; <strong>${trip.destination}</strong></p>
+                        <p class="asset-meta">🚛 Asset: <code>${trip.vehicle}</code> / Driver: <strong>${trip.driver}</strong></p>
+                        <p class="log-meta">📦 Cargo: ${trip.weight} kg | 🛣️ Route: ${trip.distance} ${distanceUnit}</p>
+                    </div>
+                    <div class="card-actions-row">
+                        <select class="status-pipeline-select" data-index="${index}">
+                            <option value="Draft" ${trip.status === 'Draft' ? 'selected' : ''}>Draft</option>
+                            <option value="Dispatched" ${trip.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
+                            <option value="Completed" ${trip.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                            <option value="Cancelled" ${trip.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        });
+
+        localStorage.setItem('transitops_trips', JSON.stringify(tripsDatabase));
+        renderMirrorHomeDashboard();
+        updateTopKPIGrid();
+    }
+
+    function renderMirrorHomeDashboard() {
+        if (!homeTripsBody) return;
+        homeTripsBody.innerHTML = "";
+        tripsDatabase.forEach(trip => {
+            homeTripsBody.innerHTML += `
+                <tr>
+                    <td><strong>${trip.id}</strong></td>
+                    <td>${trip.vehicle}</td>
+                    <td>${trip.driver}</td>
+                    <td><span class="badge ${getTripBadgeClass(trip.status)}">${trip.status}</span></td>
+                    <td>${trip.note || '--'}</td>
+                </tr>
+            `;
+        });
+    }
+
+    if (liveBoardContainer) {
+        liveBoardContainer.addEventListener('change', function(e) {
+            if (e.target.classList.contains('status-pipeline-select')) {
+                const index = e.target.getAttribute('data-index');
+                const newStatus = e.target.value;
+                const activeTrip = tripsDatabase[index];
+
+                if (newStatus === "Completed" || newStatus === "Cancelled") {
+                    const vehicleObj = fleetDatabase.find(v => v.id === activeTrip.vehicle);
+                    if (vehicleObj) vehicleObj.status = "Available";
+
+                    const driverObj = driverDatabase.find(d => d.name === activeTrip.driver);
+                    if (driverObj) driverObj.status = "Available";
+                }
+
+                activeTrip.status = newStatus;
+
+                localStorage.setItem('transitops_fleet', JSON.stringify(fleetDatabase));
+                localStorage.setItem('transitops_drivers', JSON.stringify(driverDatabase));
+                
+                renderFleetTable();
+                renderDriverTable();
+                populateDispatchDropdowns();
+                renderTripsManagement();
+            }
+        });
     }
 
     // ==========================================
@@ -246,12 +371,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderMaintenanceTable() {
         if (!maintenanceListBody) return;
         maintenanceListBody.innerHTML = "";
+        const currencySymbol = getGlobalCurrencySymbol();
+        
         maintenanceDatabase.forEach((item, index) => {
             maintenanceListBody.innerHTML += `
                 <tr>
                     <td><strong>${item.vehicle}</strong></td>
                     <td>${item.type}</td>
-                    <td>₹${item.cost ? item.cost.toLocaleString() : '0'}</td>
+                    <td>${currencySymbol}${item.cost ? item.cost.toLocaleString() : '0'}</td>
                     <td>
                         <select class="maintenance-state-select status-badge ${item.status === 'Completed' ? 'status-completed' : 'status-orange'}" data-index="${index}">
                             <option value="In Shop" ${item.status === 'In Shop' ? 'selected' : ''}>In Shop</option>
@@ -262,10 +389,11 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         });
         localStorage.setItem('transitops_maintenance', JSON.stringify(maintenanceDatabase));
+        updateTopKPIGrid();
     }
 
     // ==========================================
-    // 7. FUEL & EXPENSES MANAGEMENT MODULE (NEW)
+    // 7. FUEL & EXPENSES MANAGEMENT MODULE
     // ==========================================
     const expenseForm = document.getElementById('expense-form');
     const expenseVehicleSelect = document.getElementById('e-vehicle');
@@ -289,10 +417,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Live validation rule check matching your structural constraints sheet
     function validateExpenseAmount() {
         if (!expenseTypeSelect || !expenseAmountInput || !fuelLimitAlert || !btnExpenseSubmit) return;
-        
         const typeValue = expenseTypeSelect.value;
         const amountValue = parseInt(expenseAmountInput.value) || 0;
 
@@ -315,33 +441,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function calculateAndDisplayOverhead() {
-        if (!overheadTotalDisplay) return;
-        
-        // Sum expenses matrix arrays
         const rawExpenseSum = expenseDatabase.reduce((acc, curr) => acc + (parseInt(curr.amount) || 0), 0);
-        // Sum maintenance arrays
         const rawMaintenanceSum = maintenanceDatabase.reduce((acc, curr) => acc + (parseInt(curr.cost) || 0), 0);
-        
-        const overallOverheadTotal = rawExpenseSum + rawMaintenanceSum;
-        overheadTotalDisplay.innerText = "₹" + overallOverheadTotal.toLocaleString();
+        const currencySymbol = getGlobalCurrencySymbol();
+        if (overheadTotalDisplay) overheadTotalDisplay.innerText = currencySymbol + (rawExpenseSum + rawMaintenanceSum).toLocaleString();
     }
 
     function renderExpenseTable() {
         if (!expenseListBody) return;
         expenseListBody.innerHTML = "";
+        const currencySymbol = getGlobalCurrencySymbol();
         
         expenseDatabase.forEach(item => {
-            expenseListBody.innerHTML += `
-                <tr>
-                    <td><strong>${item.vehicle}</strong></td>
-                    <td><span class="role-tag">${item.type}</span></td>
-                    <td>₹${parseInt(item.amount).toLocaleString()}</td>
-                    <td><code>${item.invoice}</code></td>
-                    <td>${item.date}</td>
-                </tr>
-            `;
+            expenseListBody.innerHTML += `<tr><td><strong>${item.vehicle}</strong></td><td><span class="role-tag">${item.type}</span></td><td>${currencySymbol}${parseInt(item.amount).toLocaleString()}</td><td><code>${item.invoice}</code></td><td>${item.date}</td></tr>`;
         });
-
         localStorage.setItem('transitops_expenses', JSON.stringify(expenseDatabase));
         calculateAndDisplayOverhead();
     }
@@ -349,7 +462,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (expenseForm) {
         expenseForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
             expenseDatabase.push({
                 vehicle: expenseVehicleSelect.value,
                 type: expenseTypeSelect.value,
@@ -357,15 +469,137 @@ document.addEventListener('DOMContentLoaded', function() {
                 date: document.getElementById('e-date').value,
                 invoice: document.getElementById('e-invoice').value.trim().toUpperCase()
             });
-
             expenseForm.reset();
             renderExpenseTable();
         });
     }
 
     // ==========================================
-    // 8. UTILITY HELPER FUNCTIONS
+    // 8. OPERATIONS ANALYTICS & REPORTS MODULE
     // ==========================================
+    const analyticsUtilizationDisplay = document.getElementById('analytics-utilization-display');
+    const analyticsSafetyDisplay = document.getElementById('analytics-safety-display');
+    const analyticsPipelineBody = document.getElementById('analytics-pipeline-body');
+
+    function renderAnalyticsView() {
+        if (analyticsUtilizationDisplay) {
+            const totalVehiclesCount = fleetDatabase.length;
+            const activeVehiclesCount = fleetDatabase.filter(v => v.status === "On Trip").length;
+            const utilizationPercentage = totalVehiclesCount > 0 ? Math.round((activeVehiclesCount / totalVehiclesCount) * 100) : 0;
+            analyticsUtilizationDisplay.innerText = `${utilizationPercentage}%`;
+        }
+
+        if (analyticsSafetyDisplay) {
+            const totalDriversCount = driverDatabase.length;
+            const compositeScoreSum = driverDatabase.reduce((acc, curr) => acc + (parseInt(curr.score) || 0), 0);
+            const averageSafetyMean = totalDriversCount > 0 ? Math.round(compositeScoreSum / totalDriversCount) : 0;
+            analyticsSafetyDisplay.innerText = `${averageSafetyMean}%`;
+        }
+
+        if (!analyticsPipelineBody) return;
+        analyticsPipelineBody.innerHTML = "";
+
+        tripsDatabase.forEach(trip => {
+            let dynamicRowStyle = "";
+            if (trip.status === "Completed") dynamicRowStyle = "style='background-color: #f0fdf4;'";
+            if (trip.status === "Cancelled") dynamicRowStyle = "style='background-color: #fef2f2;'";
+            if (trip.status === "Dispatched") dynamicRowStyle = "style='background-color: #eff6ff;'";
+
+            analyticsPipelineBody.innerHTML += `
+                <tr ${dynamicRowStyle}>
+                    <td><strong>${trip.id}</strong></td>
+                    <td>📍 <code>${trip.source}</code> &rarr; <code>${trip.destination}</code></td>
+                    <td><code>${trip.vehicle}</code></td>
+                    <td><strong>${trip.driver}</strong></td>
+                    <td><span class="badge ${getTripBadgeClass(trip.status)}">${trip.status}</span></td>
+                </tr>
+            `;
+        });
+    }
+
+    // Dynamic global dashboard metric synced states
+    function updateTopKPIGrid() {
+        const activeV = fleetDatabase.filter(v => v.status === "On Trip").length;
+        const availV = fleetDatabase.filter(v => v.status === "Available").length;
+        const maintV = fleetDatabase.filter(v => v.status === "In Shop").length;
+        const activeT = tripsDatabase.filter(t => t.status === "Dispatched").length;
+        const pendT = tripsDatabase.filter(t => t.status === "Draft").length;
+        const activeD = driverDatabase.filter(d => d.status === "On Trip").length;
+        const utilPercent = fleetDatabase.length > 0 ? Math.round((activeV / fleetDatabase.length) * 100) : 0;
+
+        if(document.getElementById('kpi-active-vehicles')) document.getElementById('kpi-active-vehicles').innerText = activeV;
+        if(document.getElementById('kpi-available-vehicles')) document.getElementById('kpi-available-vehicles').innerText = availV;
+        if(document.getElementById('kpi-in-maintenance')) document.getElementById('kpi-in-maintenance').innerText = maintV;
+        if(document.getElementById('kpi-active-trips')) document.getElementById('kpi-active-trips').innerText = activeT;
+        if(document.getElementById('kpi-pending-trips')) document.getElementById('kpi-pending-trips').innerText = pendT;
+        if(document.getElementById('kpi-drivers-duty')) document.getElementById('kpi-drivers-duty').innerText = activeD;
+        if(document.getElementById('kpi-fleet-utilization')) document.getElementById('kpi-fleet-utilization').innerText = `${utilPercent}%`;
+    }
+
+    // ==========================================
+    // 9. SETTINGS & SYSTEM PREFERENCES ENGINE (NEW MODULE)
+    // ==========================================
+    const settingsForm = document.getElementById('settings-general-form');
+    const setDepotInput = document.getElementById('set-depot');
+    const setCurrencyInput = document.getElementById('set-currency');
+    const setUnitInput = document.getElementById('set-unit');
+
+    let systemPreferences = JSON.parse(localStorage.getItem('transitops_settings')) || {
+        depotName: "Gandhinagar Depot GJ1",
+        currency: "INR (Rs)",
+        distanceUnit: "Kilometers"
+    };
+
+    function loadSystemSettings() {
+        if (!setDepotInput || !setCurrencyInput || !setUnitInput) return;
+        setDepotInput.value = systemPreferences.depotName;
+        setCurrencyInput.value = systemPreferences.currency;
+        setUnitInput.value = systemPreferences.distanceUnit;
+    }
+
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            systemPreferences.depotName = setDepotInput.value.trim();
+            systemPreferences.currency = setCurrencyInput.value.trim();
+            systemPreferences.distanceUnit = setUnitInput.value.trim();
+            
+            localStorage.setItem('transitops_settings', JSON.stringify(systemPreferences));
+            alert("Workspace configuration updated successfully!");
+            
+            // Re-render matrices dependent on global unit/currency tokens
+            renderFleetTable();
+            renderExpenseTable();
+            renderMaintenanceTable();
+            renderTripsManagement();
+        });
+    }
+
+    function getGlobalCurrencySymbol() {
+        const value = systemPreferences.currency.toLowerCase();
+        if (value.includes('inr') || value.includes('rs')) return '₹';
+        if (value.includes('usd') || value.includes('$')) return '$';
+        if (value.includes('eur')) return '€';
+        return '';
+    }
+
+    function getGlobalDistanceUnit() {
+        const value = systemPreferences.distanceUnit.toLowerCase();
+        if (value.includes('kilometer') || value.includes('km')) return 'km';
+        if (value.includes('mile')) return 'mi';
+        return 'km';
+    }
+
+    // ==========================================
+    // 10. UTILITY HELPER FUNCTIONS
+    // ==========================================
+    function getTripBadgeClass(status) {
+        if (status === "Draft") return "status-draft";
+        if (status === "Dispatched") return "status-ontrip";
+        if (status === "Completed") return "status-completed";
+        return "status-suspended";
+    }
+
     function getStatusClass(status) {
         if (status === "Available") return "status-completed";
         if (status === "On Trip") return "status-ontrip";
@@ -381,7 +615,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 9. GLOBAL RENDER ENGINE BOOT INITIALIZATION
+    // 11. GLOBAL RENDER ENGINE BOOT INITIALIZATION
     // ==========================================
     renderFleetTable();
     renderDriverTable();
@@ -389,4 +623,5 @@ document.addEventListener('DOMContentLoaded', function() {
     renderMaintenanceTable();
     populateExpenseDropdown();
     renderExpenseTable();
+    updateTopKPIGrid();
 });

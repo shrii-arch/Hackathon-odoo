@@ -10,6 +10,7 @@
 
     <div class="dashboard-container">
         
+        <!-- SIDEBAR NAVIGATION -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <div class="brand-box"></div>
@@ -22,13 +23,15 @@
                 <a href="#" class="menu-item" data-target="trips-view">Trips</a>
                 <a href="#" class="menu-item" data-target="maintenance-view">Maintenance</a>
                 <a href="#" class="menu-item" data-target="fuel-view">Fuel & Expenses</a>
-                <a href="#" class="menu-item">Analytics</a>
-                <a href="#" class="menu-item">Settings</a>
+                <a href="#" class="menu-item" data-target="analytics-view">Analytics</a>
+                <a href="#" class="menu-item" data-target="settings-view">Settings</a>
             </nav>
         </aside>
 
+        <!-- MAIN WORKSPACE -->
         <main class="main-workspace">
             
+            <!-- Top Header Component -->
             <header class="top-bar">
                 <div class="search-wrapper">
                     <input type="text" placeholder="Search operations, assets or logs...">
@@ -39,6 +42,7 @@
                 </div>
             </header>
 
+            <!-- Operational Global Filters -->
             <section class="filter-strip">
                 <div class="filter-group">
                     <label>Classification Filter</label>
@@ -48,16 +52,18 @@
                 </div>
             </section>
 
+            <!-- KPI Performance Metrics Grid -->
             <section class="kpi-grid">
-                <div class="kpi-card border-blue"><h3>Active Vehicles</h3><div class="kpi-value">53</div></div>
-                <div class="kpi-card border-green"><h3>Available Vehicles</h3><div class="kpi-value">42</div></div>
-                <div class="kpi-card border-orange"><h3>In Maintenance</h3><div class="kpi-value">05</div></div>
-                <div class="kpi-card border-lightblue"><h3>Active Trips</h3><div class="kpi-value">18</div></div>
-                <div class="kpi-card border-purple"><h3>Pending Trips</h3><div class="kpi-value">09</div></div>
-                <div class="kpi-card border-navy"><h3>Drivers On Duty</h3><div class="kpi-value">26</div></div>
-                <div class="kpi-card border-emerald"><h3>Fleet Utilization</h3><div class="kpi-value">81%</div></div>
+                <div class="kpi-card border-blue"><h3>Active Vehicles</h3><div class="kpi-value" id="kpi-active-vehicles">0</div></div>
+                <div class="kpi-card border-green"><h3>Available Vehicles</h3><div class="kpi-value" id="kpi-available-vehicles">0</div></div>
+                <div class="kpi-card border-orange"><h3>In Maintenance</h3><div class="kpi-value" id="kpi-in-maintenance">0</div></div>
+                <div class="kpi-card border-lightblue"><h3>Active Trips</h3><div class="kpi-value" id="kpi-active-trips">0</div></div>
+                <div class="kpi-card border-purple"><h3>Pending Trips</h3><div class="kpi-value" id="kpi-pending-trips">0</div></div>
+                <div class="kpi-card border-navy"><h3>Drivers On Duty</h3><div class="kpi-value" id="kpi-drivers-duty">0</div></div>
+                <div class="kpi-card border-emerald"><h3>Fleet Utilization</h3><div class="kpi-value" id="kpi-fleet-utilization">0%</div></div>
             </section>
 
+            <!-- VIEW 1: HOME DASHBOARD -->
             <div id="dashboard-view" class="view-section">
                 <div class="data-split-row">
                     <div class="table-container">
@@ -72,6 +78,7 @@
                 </div>
             </div>
 
+            <!-- VIEW 2: FLEET REGISTRY WORKSPACE -->
             <div id="fleet-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
                     <div class="crud-form-card">
@@ -91,7 +98,7 @@
                             </div>
                             <div class="form-input-grid">
                                 <div class="input-group"><label for="v-odometer">Current Odometer (km)</label><input type="number" id="v-odometer" required></div>
-                                <div class="input-group"><label for="v-cost">Acquisition Cost (INR)</label><input type="number" id="v-cost" required></div>
+                                <div class="input-group"><label for="v-cost">Acquisition Cost</label><input type="number" id="v-cost" required></div>
                             </div>
                             <button type="submit" class="btn-action-submit">Register Vehicle</button>
                         </form>
@@ -110,6 +117,7 @@
                 </div>
             </div>
 
+            <!-- VIEW 3: DRIVERS WORKSPACE -->
             <div id="drivers-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
                     <div class="crud-form-card">
@@ -153,6 +161,7 @@
                 </div>
             </div>
 
+            <!-- VIEW 4: TRIP DISPATCHER -->
             <div id="trips-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
                     <div class="crud-form-card">
@@ -181,6 +190,7 @@
                 </div>
             </div>
 
+            <!-- VIEW 5: MAINTENANCE WORKSPACE -->
             <div id="maintenance-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
                     <div class="crud-form-card">
@@ -188,7 +198,7 @@
                         <form id="maintenance-form">
                             <div class="input-group"><label for="m-vehicle">Vehicle</label><select id="m-vehicle" required><option value="">-- Select Fleet Asset --</option></select></div>
                             <div class="input-group"><label for="m-type">Service Type</label><input type="text" id="m-type" required></div>
-                            <div class="input-group"><label for="m-cost">Cost (INR)</label><input type="number" id="m-cost" required></div>
+                            <div class="input-group"><label for="m-cost">Cost</label><input type="number" id="m-cost" required></div>
                             <div class="input-group"><label for="m-date">Date</label><input type="date" id="m-date" required></div>
                             <div class="input-group"><label for="m-status">Status</label><select id="m-status" required><option value="In Shop">In Shop</option><option value="Completed">Completed</option></select></div>
                             <button type="submit" class="btn-action-submit" style="background-color: #eab308; margin-top: 15px;">Save Record</button>
@@ -208,54 +218,28 @@
                 </div>
             </div>
 
+            <!-- VIEW 6: FUEL & EXPENSES MANAGEMENT -->
             <div id="fuel-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
-                    
                     <div class="crud-form-card">
                         <h3>Log Fleet Expense</h3>
                         <form id="expense-form">
-                            <div class="input-group">
-                                <label for="e-vehicle">Vehicle</label>
-                                <select id="e-vehicle" required><option value="">-- Select Fleet Asset --</option></select>
-                            </div>
-                            <div class="input-group">
-                                <label for="e-type">Expense Type</label>
-                                <select id="e-type" required>
-                                    <option value="Fuel">Fuel</option>
-                                    <option value="Toll">Toll</option>
-                                    <option value="Repair">Repair</option>
-                                    <option value="Others">Others</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label for="e-amount">Amount (INR)</label>
-                                <input type="number" id="e-amount" placeholder="e.g., 4500" required>
-                            </div>
-                            <div class="input-group">
-                                <label for="e-date">Date</label>
-                                <input type="date" id="e-date" required>
-                            </div>
-                            <div class="input-group">
-                                <label for="e-invoice">Invoice / Receipt No.</label>
-                                <input type="text" id="e-invoice" placeholder="e.g., INV-9921" required>
-                            </div>
-                            
+                            <div class="input-group"><label for="e-vehicle">Vehicle</label><select id="e-vehicle" required><option value="">-- Select Fleet Asset --</option></select></div>
+                            <div class="input-group"><label for="e-type">Expense Type</label><select id="e-type" required><option value="Fuel">Fuel</option><option value="Toll">Toll</option><option value="Repair">Repair</option><option value="Others">Others</option></select></div>
+                            <div class="input-group"><label for="e-amount">Amount</label><input type="number" id="e-amount" required></div>
+                            <div class="input-group"><label for="e-date">Date</label><input type="date" id="e-date" required></div>
+                            <div class="input-group"><label for="e-invoice">Invoice / Receipt No.</label><input type="text" id="e-invoice" required></div>
                             <div id="fuel-limit-alert" class="alert-banner-danger" style="display: none; margin-bottom: 12px;">
                                 <strong>Cap Breached:</strong> Fuel costs cannot exceed ₹10,000 per single operation item.
                             </div>
-
                             <button type="submit" id="btn-expense-submit" class="btn-action-submit" style="background-color: #0284c7;">Save Expense</button>
                         </form>
                     </div>
-
                     <div class="crud-table-card">
-                        
                         <div class="kpi-card border-purple" style="margin-bottom: 25px; background: #fafafa;">
                             <h3>Live Analytics Overhead Tracker</h3>
                             <div class="kpi-value" id="overhead-total-display" style="color: #6b21a8;">₹0</div>
-                            <p style="font-size: 0.78rem; color: #64748b; margin-top: 5px;">Formula: Total Expenses + Dynamic Active Maintenance logs</p>
                         </div>
-
                         <h3>Expense Registry Ledger</h3>
                         <div class="table-responsive-wrapper">
                             <table class="data-table">
@@ -263,6 +247,114 @@
                                     <tr><th>Vehicle</th><th>Type</th><th>Amount</th><th>Invoice Code</th><th>Date Node</th></tr>
                                 </thead>
                                 <tbody id="expense-list-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 7: OPERATIONS ANALYTICS & REPORTS -->
+            <div id="analytics-view" class="view-section" style="display: none;">
+                <div class="crud-layout-row" style="display: flex; flex-direction: column; gap: 25px;">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div class="kpi-card border-emerald" style="background: #fafafa; padding: 25px;">
+                            <h3>Live Fleet Utilization Engine</h3>
+                            <div class="kpi-value" id="analytics-utilization-display" style="color: #10b981;">0%</div>
+                            <p style="font-size: 0.8rem; color: #64748b; margin-top: 5px;">Active vehicles / Total registered fleet mapping</p>
+                        </div>
+                        <div class="kpi-card border-blue" style="background: #fafafa; padding: 25px;">
+                            <h3>Operator System Safety Mean</h3>
+                            <div class="kpi-value" id="analytics-safety-display" style="color: #2563eb;">0%</div>
+                            <p style="font-size: 0.8rem; color: #64748b; margin-top: 5px;">Average arithmetic safety score performance log</p>
+                        </div>
+                    </div>
+                    <div class="crud-table-card" style="width: 100%;">
+                        <h3>Comprehensive Operations Pipeline Sheet</h3>
+                        <div class="table-responsive-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Trip Identity</th><th>Route Vector</th><th>Assigned Asset</th><th>Operator Node</th><th>Status Matrix</th></tr>
+                                </thead>
+                                <tbody id="analytics-pipeline-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 8: SETTINGS & RBAC MATRIX (NEW) -->
+            <div id="settings-view" class="view-section" style="display: none;">
+                <div class="crud-layout-row" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; align-items: start;">
+                    
+                    <!-- General Settings Card Options -->
+                    <div class="crud-form-card">
+                        <h3 style="border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 20px; color: #1e293b; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">General Options</h3>
+                        <form id="settings-general-form">
+                            <div class="input-group" style="margin-bottom: 15px;">
+                                <label for="set-depot" style="font-weight: 600; font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Depot Name</label>
+                                <input type="text" id="set-depot" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" required>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 15px;">
+                                <label for="set-currency" style="font-weight: 600; font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Currency</label>
+                                <input type="text" id="set-currency" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" required>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 25px;">
+                                <label for="set-unit" style="font-weight: 600; font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Distance Unit</label>
+                                <input type="text" id="set-unit" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" required>
+                            </div>
+                            <button type="submit" class="btn-action-submit" style="background-color: #2563eb; width: auto; padding: 10px 24px;">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- Role-Based Access Control (RBAC) Matrix View -->
+                    <div class="crud-table-card">
+                        <h3 style="border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 20px; color: #1e293b; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">Role-Based Access (RBAC)</h3>
+                        <div class="table-responsive-wrapper">
+                            <table class="data-table" style="text-align: center;">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: left;">Role Name</th>
+                                        <th>Fleet</th>
+                                        <th>Drivers</th>
+                                        <th>Trips</th>
+                                        <th>Fuel/Exp.</th>
+                                        <th>Analytics</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align: left;"><strong>Fleet Manager</strong></td>
+                                        <td style="color: #10b981; font-weight: bold;">✓</td>
+                                        <td style="color: #10b981; font-weight: bold;">✓</td>
+                                        <td style="color: #64748b;">—</td>
+                                        <td style="color: #64748b;">—</td>
+                                        <td style="color: #10b981; font-weight: bold;">✓</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: left;"><strong>Dispatcher</strong></td>
+                                        <td style="color: #0284c7; font-weight: 500;">view</td>
+                                        <td style="color: #64748b;">—</td>
+                                        <td style="color: #10b981; font-weight: bold;">✓</td>
+                                        <td style="color: #64748b;">—</td>
+                                        <td style="color: #64748b;">—</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: left;"><strong>Safety Officer</strong></td>
+                                        <td style="color: #64748b;">—</td>
+                                        <td style="color: #10b981; font-weight: bold;">✓</td>
+                                        <td style="color: #0284c7; font-weight: 500;">view</td>
+                                        <td style="color: #64748b;">—</td>
+                                        <td style="color: #64748b;">—</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: left;"><strong>Financial Analyst</strong></td>
+                                        <td style="color: #0284c7; font-weight: 500;">view</td>
+                                        <td style="color: #64748b;">—</td>
+                                        <td style="color: #64748b;">—</td>
+                                        <td style="color: #10b981; font-weight: bold;">✓</td>
+                                        <td style="color: #10b981; font-weight: bold;">✓</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
