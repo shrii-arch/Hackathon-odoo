@@ -16,9 +16,9 @@
                 <h2>TransitOps</h2>
             </div>
             <nav class="sidebar-menu">
-                <a href="#" class="menu-item active">Dashboard</a>
-                <a href="#" class="menu-item">Fleet</a>
-                <a href="#" class="menu-item">Drivers</a>
+                <a href="#" class="menu-item active" data-target="dashboard-view">Dashboard</a>
+                <a href="#" class="menu-item" data-target="fleet-view">Fleet</a>
+                <a href="#" class="menu-item" data-target="drivers-view">Drivers</a>
                 <a href="#" class="menu-item">Trips</a>
                 <a href="#" class="menu-item">Maintenance</a>
                 <a href="#" class="menu-item">Fuel & Expenses</a>
@@ -41,54 +41,21 @@
 
             <section class="filter-strip">
                 <div class="filter-group">
-                    <label>Vehicle Type</label>
-                    <select id="filter-type">
-                        <option value="All">All Types</option>
-                        <option value="Van">Vans</option>
-                        <option value="Truck">Trucks</option>
-                        <option value="Mini">Minis</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Status</label>
-                    <select id="filter-status">
-                        <option value="All">All Statuses</option>
-                        <option value="Available">Available</option>
-                        <option value="On Trip">On Trip</option>
-                        <option value="In Shop">In Shop</option>
+                    <label>Classification Filter</label>
+                    <select id="filter-global">
+                        <option value="All">Show All Parameters</option>
                     </select>
                 </div>
             </section>
 
             <section class="kpi-grid">
-                <div class="kpi-card border-blue">
-                    <h3>Active Vehicles</h3>
-                    <div class="kpi-value">53</div>
-                </div>
-                <div class="kpi-card border-green">
-                    <h3>Available Vehicles</h3>
-                    <div class="kpi-value">42</div>
-                </div>
-                <div class="kpi-card border-orange">
-                    <h3>In Maintenance</h3>
-                    <div class="kpi-value">05</div>
-                </div>
-                <div class="kpi-card border-lightblue">
-                    <h3>Active Trips</h3>
-                    <div class="kpi-value">18</div>
-                </div>
-                <div class="kpi-card border-purple">
-                    <h3>Pending Trips</h3>
-                    <div class="kpi-value">09</div>
-                </div>
-                <div class="kpi-card border-navy">
-                    <h3>Drivers On Duty</h3>
-                    <div class="kpi-value">26</div>
-                </div>
-                <div class="kpi-card border-emerald">
-                    <h3>Fleet Utilization</h3>
-                    <div class="kpi-value">81%</div>
-                </div>
+                <div class="kpi-card border-blue"><h3>Active Vehicles</h3><div class="kpi-value">53</div></div>
+                <div class="kpi-card border-green"><h3>Available Vehicles</h3><div class="kpi-value">42</div></div>
+                <div class="kpi-card border-orange"><h3>In Maintenance</h3><div class="kpi-value">05</div></div>
+                <div class="kpi-card border-lightblue"><h3>Active Trips</h3><div class="kpi-value">18</div></div>
+                <div class="kpi-card border-purple"><h3>Pending Trips</h3><div class="kpi-value">09</div></div>
+                <div class="kpi-card border-navy"><h3>Drivers On Duty</h3><div class="kpi-value">26</div></div>
+                <div class="kpi-card border-emerald"><h3>Fleet Utilization</h3><div class="kpi-value">81%</div></div>
             </section>
 
             <div id="dashboard-view" class="view-section">
@@ -97,121 +64,134 @@
                         <h3>Recent Operations Lifecycle</h3>
                         <table class="data-table">
                             <thead>
-                                <tr>
-                                    <th>Trip ID</th>
-                                    <th>Vehicle</th>
-                                    <th>Driver</th>
-                                    <th>Status</th>
-                                    <th>ETA Note</th>
-                                </tr>
+                                <tr><th>Trip ID</th><th>Vehicle</th><th>Driver</th><th>Status</th><th>ETA Note</th></tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>TR001</td>
-                                    <td>VAN-05</td>
-                                    <td>Alex</td>
-                                    <td><span class="badge status-ontrip">On Trip</span></td>
-                                    <td>45 min</td>
-                                </tr>
+                                <tr><td>TR001</td><td>VAN-05</td><td>Alex</td><td><span class="badge status-ontrip">On Trip</span></td><td>45 min</td></tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="status-distribution-panel">
-                        <h3>Vehicle Lifecycle Status</h3>
-                        <div class="stat-progress-group">
-                            <div class="progress-label"><span>Available</span><strong>42</strong></div>
-                            <div class="progress-bar-bg"><div class="progress-fill fill-green" style="width: 65%;"></div></div>
-                        </div>
                     </div>
                 </div>
             </div>
 
             <div id="fleet-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
-                    
                     <div class="crud-form-card">
                         <h3>Register New Fleet Asset</h3>
                         <form id="vehicle-form">
                             <div class="form-input-grid">
-                                <div class="input-group">
-                                    <label for="v-name">Vehicle Model/ID</label>
-                                    <input type="text" id="v-name" placeholder="e.g., Tata Ultra" required>
-                                </div>
-                                <div class="input-group">
-                                    <label for="v-reg">Reg Number (Unique)</label>
-                                    <input type="text" id="v-reg" placeholder="e.g., WB-02-X-9999" required>
-                                </div>
+                                <div class="input-group"><label for="v-name">Vehicle Model/ID</label><input type="text" id="v-name" required></div>
+                                <div class="input-group"><label for="v-reg">Reg Number (Unique)</label><input type="text" id="v-reg" required></div>
                             </div>
                             <div class="form-input-grid">
-                                <div class="input-group">
-                                    <label for="v-type">Fleet Classification</label>
-                                    <select id="v-type" required>
-                                        <option value="Van">Commercial Van</option>
-                                        <option value="Truck">Heavy Duty Truck</option>
-                                        <option value="Mini">Mini Delivery Loader</option>
-                                    </select>
-                                </div>
-                                <div class="input-group">
-                                    <label for="v-fuel">Engine / Fuel Type</label>
-                                    <select id="v-fuel" required>
-                                        <option value="Diesel">Diesel</option>
-                                        <option value="Petrol">Petrol</option>
-                                        <option value="EV">Electric (EV)</option>
-                                        <option value="CNG">CNG</option>
-                                    </select>
-                                </div>
+                                <div class="input-group"><label for="v-type">Fleet Classification</label><select id="v-type" required><option value="Van">Van</option><option value="Truck">Truck</option><option value="Mini">Mini</option></select></div>
+                                <div class="input-group"><label for="v-fuel">Engine Type</label><select id="v-fuel" required><option value="Diesel">Diesel</option><option value="Petrol">Petrol</option><option value="EV">EV</option></select></div>
                             </div>
                             <div class="form-input-grid">
-                                <div class="input-group">
-                                    <label for="v-capacity">Load Capacity (kg)</label>
-                                    <input type="number" id="v-capacity" placeholder="e.g., 1500" min="1" required>
-                                </div>
-                                <div class="input-group">
-                                    <label for="v-seats">Seating Capacity</label>
-                                    <input type="number" id="v-seats" placeholder="e.g., 3" min="1" required>
-                                </div>
+                                <div class="input-group"><label for="v-capacity">Load Capacity (kg)</label><input type="number" id="v-capacity" required></div>
+                                <div class="input-group"><label for="v-seats">Seating Capacity</label><input type="number" id="v-seats" required></div>
                             </div>
                             <div class="form-input-grid">
-                                <div class="input-group">
-                                    <label for="v-odometer">Current Odometer (km)</label>
-                                    <input type="number" id="v-odometer" placeholder="e.g., 14200" min="0" required>
-                                </div>
-                                <div class="input-group">
-                                    <label for="v-cost">Acquisition Cost (INR)</label>
-                                    <input type="number" id="v-cost" placeholder="e.g., 1250000" min="0" required>
-                                </div>
+                                <div class="input-group"><label for="v-odometer">Current Odometer (km)</label><input type="number" id="v-odometer" required></div>
+                                <div class="input-group"><label for="v-cost">Acquisition Cost (INR)</label><input type="number" id="v-cost" required></div>
                             </div>
                             <button type="submit" class="btn-action-submit">Register Vehicle</button>
                         </form>
                     </div>
-
                     <div class="crud-table-card">
                         <h3>Registered Fleet Matrix</h3>
                         <div class="table-responsive-wrapper">
                             <table class="data-table">
                                 <thead>
-                                    <tr>
-                                        <th>Asset / ID</th>
-                                        <th>Reg Code</th>
-                                        <th>Type</th>
-                                        <th>Fuel</th>
-                                        <th>Cap / Seats</th>
-                                        <th>Odometer</th>
-                                        <th>Cost</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
+                                    <tr><th>Asset / ID</th><th>Reg Code</th><th>Type</th><th>Fuel</th><th>Cap / Seats</th><th>Odometer</th><th>Cost</th><th>Status</th><th>Action</th></tr>
                                 </thead>
-                                <tbody id="vehicle-list-body"></tbody>
+                                <tbody id="vehicle-list-body">
+                                </tbody>
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-        </main>
+            <div id="drivers-view" class="view-section" style="display: none;">
+                <div class="crud-layout-row">
+                    
+                    <div class="crud-form-card">
+                        <h3>Onboard New Operator</h3>
+                        <form id="driver-form">
+                            <div class="form-input-grid">
+                                <div class="input-group">
+                                    <label for="d-name">Driver Full Name</label>
+                                    <input type="text" id="d-name" placeholder="e.g., Suresh Kumar" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="d-phone">Contact Number</label>
+                                    <input type="tel" id="d-phone" placeholder="e.g., 98765XXXXX" required>
+                                </div>
+                            </div>
+                            <div class="form-input-grid">
+                                <div class="input-group">
+                                    <label for="d-license">License Number</label>
+                                    <input type="text" id="d-license" placeholder="e.g., DL-90045" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="d-expiry">License Expiry Date</label>
+                                    <input type="date" id="d-expiry" required>
+                                </div>
+                            </div>
+                            <div class="form-input-grid">
+                                <div class="input-group">
+                                    <label for="d-category">License Category</label>
+                                    <select id="d-category" required>
+                                        <option value="LMV">LMV (Light Motor Vehicle)</option>
+                                        <option value="HMV">HMV (Heavy Motor Vehicle)</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label for="d-score">Safety Score (%)</label>
+                                    <input type="number" id="d-score" placeholder="e.g., 95" min="0" max="100" required>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="d-status">Duty Operational Status</label>
+                                <select id="d-status" required>
+                                    <option value="Available">Available</option>
+                                    <option value="On Trip">On Trip</option>
+                                    <option value="Off Duty">Off Duty</option>
+                                    <option value="Suspended">Suspended</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-action-submit">Onboard Driver</button>
+                        </form>
+                    </div>
+
+        <div class="crud-table-card">
+            <h3>Registered Drivers</h3>
+            <div class="table-responsive-wrapper">
+               <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Driver Name</th>
+                            <th>License Number</th>
+                            <th>Category</th>
+                            <th>Expiry Threshold</th>
+                            <th>Contact Node</th>
+                            <th>Safety Index</th>
+                            <th>Status Badge</th>
+                            <th>Action Log</th>
+                        </tr>
+                    </thead>
+                    <tbody id="driver-list-body">
+                            <!-- Driver rows will be populated by JavaScript -->
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
+    
+ </main>
+ </div>
 
     <script src="dashboard.js"></script>
 </body>

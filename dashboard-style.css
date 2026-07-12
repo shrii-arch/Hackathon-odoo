@@ -338,3 +338,19 @@ body, html {
     padding: 10px 8px;
     font-size: 0.82rem;
 }
+/* Custom status tags match for Vehicle Management workflows */
+.badge.status-suspended {
+    background-color: #fee2e2;
+    color: #ef4444;
+    border: 1px solid #fca5a5;
+}
+
+/* Ensure data inputs wrap cleanly inside target views */
+input[type="date"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    box-sizing: border-box;
+}
