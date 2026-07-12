@@ -85,7 +85,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px;
+    padding: 60px 40px;
 }
 
 .form-wrapper {
@@ -166,6 +166,7 @@ body, html {
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
+    margin-bottom: 25px;
     transition: background 0.2s ease;
 }
 
@@ -186,19 +187,20 @@ body, html {
 
 /* Lower help text matching wireframe notes */
 .scoped-info {
-    margin-top: 35px;
+    margin-top: 40px;
     border-top: 1px solid #e5e7eb;
-    padding-top: 20px;
+    padding-top: 25px;
     font-size: 0.85rem;
     color: #6b7280;
+    line-height: 1.5;
 }
 
 .scoped-info ul {
-    margin-top: 8px;
+    margin-top: 12px;
     list-style-type: none;
     padding-left: 5px;
 }
 
 .scoped-info li {
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
