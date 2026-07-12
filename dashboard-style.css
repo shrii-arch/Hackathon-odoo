@@ -21,9 +21,12 @@ body, html {
 .sidebar {
     width: 240px;
     background-color: #1e2229;
+    height: 100vh;
     color: #ffffff;
+    padding: 20px;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 }
 
 .sidebar-brand {
@@ -47,9 +50,15 @@ body, html {
 }
 
 .sidebar-menu {
+    width:100%;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
-    padding: 15px 0;
+}
+
+.sidebar-menu a {
+    margin-bottom: 10px;
+    display: block;
 }
 
 .menu-item {
@@ -467,4 +476,110 @@ select.maintenance-state-select.status-completed {
     background-color: #d1fae5;
     color: #065f46;
     border-color: #a7f3d0;
+}
+/* --- DARK MODE STYLES --- */
+
+/* Base body background swap */
+body.dark-mode {
+    background-color: #0f172a; /* Deep Slate Blue */
+    color: #f8fafc;
+}
+
+/* Sidebar Adjustment (optional, making it slightly darker or distinct) */
+body.dark-mode .sidebar {
+    background: #0b0f19;
+}
+
+/* Main Workspace & Tab/Ledger Panes */
+body.dark-mode .main-workspace {
+    background-color: #0f172a;
+}
+
+body.dark-mode .tab-pane {
+    background-color: #1e293b; /* Medium Dark Slate for cards/tables */
+    border-color: #334155; /* Subtle border */
+    color: #f8fafc;
+}
+
+/* Forms, Inputs, and Select Dropdowns */
+body.dark-mode input, 
+body.dark-mode select {
+    background-color: #334155;
+    color: #ffffff;
+    border: 1px solid #475569;
+}
+
+body.dark-mode input::placeholder {
+    color: #94a3b8;
+}
+
+/* Action Buttons & Tables */
+body.dark-mode table {
+    color: #e2e8f0;
+}
+
+/* Theme Toggle Button Style */
+.theme-toggle-btn {
+    background: #334155;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-top: auto; /* Pushes it to the bottom if using a flex sidebar */
+    width: 100%;
+    text-align: left;
+}
+
+body.dark-mode .theme-toggle-btn {
+    background: #f8fafc;
+    color: #0f172a;
+}
+/* Ensure all text labels within the dark-mode form are visible */
+body.dark-mode #trip-form, 
+body.dark-mode #fleet-form,
+body.dark-mode .tab-pane {
+    color: #f8fafc; /* Sets white text for all labels inside forms/panes */
+}
+
+/* Specifically target labels or text directly inside the form */
+body.dark-mode form label,
+body.dark-mode form {
+    color: #f8fafc !important;
+}
+
+/* Ensure the inputs themselves have high-contrast text */
+body.dark-mode input, 
+body.dark-mode select {
+    background-color: #334155;
+    color: #ffffff !important; /* Forces the text typed inside to be white */
+    border: 1px solid #475569;
+}
+/* Force-override everything to make text visible in Dark Mode */
+body.dark-mode, 
+body.dark-mode label, 
+body.dark-mode p, 
+body.dark-mode span, 
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode div, 
+body.dark-mode td, 
+body.dark-mode th {
+    color: #ff0000 !important;
+}
+
+/* Ensure inputs themselves are readable */
+body.dark-mode input, 
+body.dark-mode select {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    border: 1px solid #475569 !important;
+}
+/* Explicitly fix text color for Maintenance and Input labels in Dark Mode */
+body.dark-mode .view-section,
+body.dark-mode .tab-pane,
+body.dark-mode form {
+    color: #ffffff !important; /* Forces all text inside these to be white */
 }

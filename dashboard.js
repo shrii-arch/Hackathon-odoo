@@ -1,4 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    
+    // 1. Check local storage on page load to apply saved preference
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggleBtn.textContent = '☀️ Light Mode';
+    }
+
+    // 2. Toggle theme on button click
+    themeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        
+        // Save choice & update button label
+        if (document.body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            themeToggleBtn.textContent = '☀️ Light Mode';
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeToggleBtn.textContent = '🌙 Dark Mode';
+        }
+    });
+
     
     // ==========================================
     // 1. SESSION INITIALIZATION ENGINE
