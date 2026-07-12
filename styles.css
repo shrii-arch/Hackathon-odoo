@@ -1,4 +1,3 @@
-/* Basic Reset */
 * {
     margin: 0;
     padding: 0;
@@ -8,220 +7,162 @@
 
 body, html {
     height: 100%;
+    max-height: 100vh;
+    overflow: hidden; /* Strictly locks out accidental window scrolling */
     background-color: #f8f9fa;
 }
 
-/* Split-screen container layout */
 .auth-container {
     display: flex;
     height: 100vh;
     width: 100vw;
 }
 
-/* Left Dark Side Panel */
 .auth-sidebar {
     width: 40%;
     background-color: #222831;
     color: #ffffff;
-    padding: 60px;
+    padding: 40px; /* Reduced to balance space */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
 .logo-box {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     background-color: #f3a605;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border-radius: 4px;
 }
 
 .logo-section h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 600;
 }
 
 .logo-section p {
     color: #a0a5b0;
     margin-top: 5px;
+    font-size: 0.9rem;
 }
 
 .info-section h3 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    color: #ffffff;
-}
-
-.info-section ul {
-    list-style: none;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
 }
 
 .info-section li {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     color: #f3a605;
     font-weight: bold;
-    padding-left: 15px;
-    position: relative;
-}
-
-.info-section li::before {
-    content: "•";
-    position: absolute;
-    left: 0;
-    color: #ffffff;
+    font-size: 0.95rem;
 }
 
 .footer-text {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #5c6370;
-    letter-spacing: 1px;
 }
 
-/* Right Light Side Form Panel */
 .auth-form-panel {
     width: 60%;
     background-color: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 30px 40px;
+    padding: 20px 40px; /* Compact padding to push items inward */
 }
 
 .form-wrapper {
     width: 100%;
-    max-width: 450px;
+    max-width: 420px;
 }
 
 .form-wrapper h2 {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     color: #222831;
 }
 
 .subtitle {
     color: #7c838e;
-    margin-bottom: 20px;
-    font-size: 0.9rem;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
 }
 
-/* Forms and Inputs styling */
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 12px; /* Very tight spacing footprint */
 }
 
 .input-group label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: bold;
     color: #7c838e;
-    margin-bottom: 8px;
-    letter-spacing: 0.5px;
+    margin-bottom: 5px;
 }
 
 .input-group input, .input-group select {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
-    font-size: 1rem;
-    color: #222831;
-    outline: none;
-    background-color: #ffffff;
-}
-
-.input-group input:focus, .input-group select:focus {
-    border-color: #f3a605;
+    font-size: 0.95rem;
 }
 
 .form-options {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
 }
 
-.checkbox-container {
-    color: #4b5563;
-    cursor: pointer;
-}
-
-.forgot-link {
-    color: #0066cc;
-    text-decoration: none;
-}
-
-.forgot-link:hover {
-    text-decoration: underline;
-}
-
-/* Action button matches mockup color primary */
 .btn-signin {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     background-color: #f3a605;
     color: #ffffff;
     border: none;
     border-radius: 25px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: bold;
     cursor: pointer;
-    margin-bottom: 25px;
-    transition: background 0.2s ease;
 }
 
-.btn-signin:hover {
-    background-color: #d99404;
+.toggle-container {
+    text-align: center;
+    margin-top: 10px;
 }
 
-/* Error message styling box */
+.toggle-container a {
+    font-size: 0.85rem;
+    color: #0066cc;
+    text-decoration: none;
+}
+
+/* Compact Error Box styling */
 .error-banner {
     background-color: #fee2e2;
     border: 1px dashed #ef4444;
     color: #b91c1c;
-    padding: 12px;
+    padding: 8px 12px;
     border-radius: 6px;
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-}
-
-/* Lower help text matching wireframe notes */
-.scoped-info {
-    margin-top: 25px;
-    border-top: 1px solid #e5e7eb;
-    padding-top: 15px;
+    margin-bottom: 15px;
     font-size: 0.85rem;
-    color: #6b7280;
-    line-height: 1.4;
 }
 
-.scoped-info ul {
-    margin-top: 8px;
-    list-style-type: none;
-    padding-left: 5px;
+.scoped-info {
+    margin-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 12px;
+    font-size: 0.8rem;
+    color: #6b7280;
 }
 
 .scoped-info li {
     margin-bottom: 4px;
 }
-/* Styling for the New User toggle link */
-.toggle-container {
-    text-align: center;
-    margin-top: 15px;
-}
 
-.toggle-container a {
-    font-size: 0.9rem;
-    color: #0066cc;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.toggle-container a:hover {
-    text-decoration: underline;
-}
-
-/* Disabled input state when an account gets locked out */
 input:disabled, select:disabled, button:disabled {
     background-color: #f3f4f6;
     color: #9ca3af;
