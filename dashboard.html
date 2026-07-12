@@ -105,30 +105,81 @@
                     </div>
                 </div>
 
-                <div id="fleet-form-pane" class="fleet-pane" style="display: none;">
-                    <div class="crud-form-card" style="max-width: 700px; margin: 0 auto;">
-                        <h3 style="margin-bottom: 20px;">Register New Fleet Asset</h3>
-                        <form id="vehicle-form">
-                            <div class="form-input-grid">
-                                <div class="input-group"><label for="v-name">Vehicle Model/ID</label><input type="text" id="v-name" required></div>
-                                <div class="input-group"><label for="v-reg">Reg Number (Unique)</label><input type="text" id="v-reg" required></div>
-                            </div>
-                            <div class="form-input-grid">
-                                <div class="input-group"><label for="v-type">Fleet Classification</label><select id="v-type" required><option value="Van">Van</option><option value="Truck">Truck</option><option value="Mini">Mini</option></select></div>
-                                <div class="input-group"><label for="v-fuel">Engine Type</label><select id="v-fuel" required><option value="Diesel">Diesel</option><option value="Petrol">Petrol</option><option value="EV">EV</option></select></div>
-                            </div>
-                            <div class="form-input-grid">
-                                <div class="input-group"><label for="v-capacity">Load Capacity (kg)</label><input type="number" id="v-capacity" required></div>
-                                <div class="input-group"><label for="v-seats">Seating Capacity</label><input type="number" id="v-seats" required></div>
-                            </div>
-                            <div class="form-input-grid">
-                                <div class="input-group"><label for="v-odometer">Current Odometer (km)</label><input type="number" id="v-odometer" required></div>
-                                <div class="input-group"><label for="v-cost">Acquisition Cost</label><input type="number" id="v-cost" required></div>
-                            </div>
-                            <button type="submit" class="btn-action-submit" style="margin-top: 10px;">Register Vehicle</button>
-                        </form>
-                    </div>
+                <!-- SUB-PANE B: REGISTRY FORM VIEW -->
+<div id="fleet-form-pane" class="fleet-pane" style="display: none; padding: 20px 0;">
+    <div class="crud-form-card" style="max-width: 650px; margin: 0 auto; background: #ffffff; padding: 35px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        
+        <h3 style="margin-top: 0; margin-bottom: 28px; color: #1e293b; font-size: 1.25rem; font-weight: 600; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            Register New Fleet Asset
+        </h3>
+        
+        <form id="vehicle-form" style="display: flex; flex-direction: column; gap: 24px;">
+            
+            <!-- Row 1 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="v-name" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Vehicle Model/ID</label>
+                    <input type="text" id="v-name" required placeholder="e.g. MAHINDRA VAN" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;">
                 </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="v-reg" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Reg Number (Unique)</label>
+                    <input type="text" id="v-reg" required placeholder="e.g. WB-02-A-1111" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;">
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="v-type" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Fleet Classification</label>
+                    <select id="v-type" required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background-color: #fff; outline: none;">
+                        <option value="Van">Van</option>
+                        <option value="Truck">Truck</option>
+                        <option value="Mini">Mini</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="v-fuel" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Engine Type</label>
+                    <select id="v-fuel" required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background-color: #fff; outline: none;">
+                        <option value="Diesel">Diesel</option>
+                        <option value="Petrol">Petrol</option>
+                        <option value="EV">EV</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 3 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="v-capacity" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Load Capacity (kg)</label>
+                    <input type="number" id="v-capacity" required placeholder="e.g. 800" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="v-seats" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Seating Capacity</label>
+                    <input type="number" id="v-seats" required placeholder="e.g. 2" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;">
+                </div>
+            </div>
+
+            <!-- Row 4 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="v-odometer" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Current Odometer (km)</label>
+                    <input type="number" id="v-odometer" required placeholder="e.g. 15200" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="v-cost" style="font-size: 0.85rem; font-weight: 500; color: #475569;">Acquisition Cost</label>
+                    <input type="number" id="v-cost" required placeholder="e.g. 850000" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;">
+                </div>
+            </div>
+
+            <!-- Submit Action -->
+            <div style="margin-top: 10px;">
+                <button type="submit" class="btn-action-submit" style="width: 100%; padding: 12px; background-color: #1e293b; color: #ffffff; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s;">
+                    Register Vehicle
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
             </div>
 
