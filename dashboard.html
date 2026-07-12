@@ -100,8 +100,56 @@
                 </div>
             </section>
 
+            <div id="dashboard-view" class="view-section">
             <div class="data-split-row">
-                
+                </div>
+            </div>
+                <div id="fleet-view" class="view-section" style="display: none;">
+    <div class="crud-layout-row">
+        
+        <div class="crud-form-card">
+            <h3>Register New Fleet Asset</h3>
+            <form id="vehicle-form">
+                <div class="input-group">
+                    <label for="v-name">Vehicle Name / ID</label>
+                    <input type="text" id="v-name" placeholder="e.g., Van-05, Trk-12" required>
+                </div>
+                <div class="input-group">
+                    <label for="v-type">Vehicle Fleet Type</label>
+                    <select id="v-type" required>
+                        <option value="Van">Commercial Van</option>
+                        <option value="Truck">Heavy Duty Truck</option>
+                        <option value="Mini">Mini Delivery Loader</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="v-capacity">Max Cargo Capacity (kg)</label>
+                    <input type="number" id="v-capacity" placeholder="e.g., 500" min="1" required>
+                </div>
+                <button type="submit" class="btn-action-submit">Register Vehicle</button>
+            </form>
+        </div>
+
+        <div class="crud-table-card">
+            <h3>Registered Fleet Matrix</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Asset Name</th>
+                        <th>Classification</th>
+                        <th>Capacity Limit</th>
+                        <th>Current Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="vehicle-list-body">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
                 <div class="table-container">
                     <h3>Recent Operations Lifecycle</h3>
                     <table class="data-table">

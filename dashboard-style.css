@@ -258,3 +258,65 @@ body, html {
 .fill-blue { background-color: #3182ce; }
 .fill-orange { background-color: #dd6b20; }
 .fill-red { background-color: #e53e3e; }
+/* CRUD View Layout Engine */
+.crud-layout-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Form takes 1 part, table list takes 2 parts */
+    gap: 20px;
+    align-items: start;
+    margin-top: 10px;
+}
+
+.crud-form-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.crud-form-card h3, .crud-table-card h3 {
+    font-size: 1rem;
+    color: #2d3748;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.btn-action-submit {
+    width: 100%;
+    padding: 10px;
+    background-color: #222831; /* Contrasting dark button design */
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.btn-action-submit:hover {
+    background-color: #f3a605;
+}
+
+/* Action button component for row removal */
+.btn-delete-row {
+    background-color: #fee2e2;
+    color: #ef4444;
+    border: 1px solid #fee2e2;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.btn-delete-row:hover {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+.crud-table-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
