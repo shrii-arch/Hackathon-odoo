@@ -10,7 +10,6 @@
 
     <div class="dashboard-container">
         
-        <!-- SIDEBAR NAVIGATION -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <div class="brand-box"></div>
@@ -28,10 +27,8 @@
             </nav>
         </aside>
 
-        <!-- MAIN WORKSPACE -->
         <main class="main-workspace">
             
-            <!-- Top Header Component -->
             <header class="top-bar">
                 <div class="search-wrapper">
                     <input type="text" placeholder="Search operations, assets or logs...">
@@ -42,18 +39,7 @@
                 </div>
             </header>
 
-            <!-- Operational Global Filters -->
-            <section class="filter-strip">
-                <div class="filter-group">
-                    <label>Classification Filter</label>
-                    <select id="filter-global">
-                        <option value="All">Show All Parameters</option>
-                    </select>
-                </div>
-            </section>
-
-            <!-- KPI Performance Metrics Grid -->
-            <section class="kpi-grid">
+            <section class="kpi-grid" id="global-kpi-grid">
                 <div class="kpi-card border-blue"><h3>Active Vehicles</h3><div class="kpi-value" id="kpi-active-vehicles">0</div></div>
                 <div class="kpi-card border-green"><h3>Available Vehicles</h3><div class="kpi-value" id="kpi-available-vehicles">0</div></div>
                 <div class="kpi-card border-orange"><h3>In Maintenance</h3><div class="kpi-value" id="kpi-in-maintenance">0</div></div>
@@ -63,7 +49,6 @@
                 <div class="kpi-card border-emerald"><h3>Fleet Utilization</h3><div class="kpi-value" id="kpi-fleet-utilization">0%</div></div>
             </section>
 
-            <!-- VIEW 1: HOME DASHBOARD -->
             <div id="dashboard-view" class="view-section">
                 <div class="data-split-row">
                     <div class="table-container">
@@ -78,11 +63,51 @@
                 </div>
             </div>
 
-            <!-- VIEW 2: FLEET REGISTRY WORKSPACE -->
             <div id="fleet-view" class="view-section" style="display: none;">
-                <div class="crud-layout-row">
-                    <div class="crud-form-card">
-                        <h3>Register New Fleet Asset</h3>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+                    <button class="fleet-sub-tab active" data-sub="fleet-matrix-pane" style="background: none; border: none; font-weight: 600; font-size: 0.95rem; cursor: pointer; color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 8px; margin-bottom: -12px;">Registered Matrix</button>
+                    <button class="fleet-sub-tab" data-sub="fleet-form-pane" style="background: none; border: none; font-weight: 500; font-size: 0.95rem; cursor: pointer; color: #64748b; padding-bottom: 8px;">Add Vehicle</button>
+                </div>
+
+                <div id="fleet-matrix-pane" class="fleet-pane">
+                    <div style="background: #ffffff; padding: 15px 20px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 20px; margin-bottom: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Vehicle Type</label>
+                            <select id="filter-fleet-type" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; min-width: 160px;">
+                                <option value="All">All Classifications</option>
+                                <option value="Van">Van</option>
+                                <option value="Truck">Truck</option>
+                                <option value="Mini">Mini</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Status Mapping</label>
+                            <select id="filter-fleet-status" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; min-width: 160px;">
+                                <option value="All">All States</option>
+                                <option value="Available">Available</option>
+                                <option value="On Trip">On Trip</option>
+                                <option value="In Shop">In Shop</option>
+                                <option value="Retired">Retired</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="crud-table-card" style="width: 100%;">
+                        <div class="table-responsive-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Asset / ID</th><th>Reg Code</th><th>Type</th><th>Fuel</th><th>Cap / Seats</th><th>Odometer</th><th>Cost</th><th>Status</th><th>Action</th></tr>
+                                </thead>
+                                <tbody id="vehicle-list-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="fleet-form-pane" class="fleet-pane" style="display: none;">
+                    <div class="crud-form-card" style="max-width: 700px; margin: 0 auto;">
+                        <h3 style="margin-bottom: 20px;">Register New Fleet Asset</h3>
                         <form id="vehicle-form">
                             <div class="form-input-grid">
                                 <div class="input-group"><label for="v-name">Vehicle Model/ID</label><input type="text" id="v-name" required></div>
@@ -100,24 +125,13 @@
                                 <div class="input-group"><label for="v-odometer">Current Odometer (km)</label><input type="number" id="v-odometer" required></div>
                                 <div class="input-group"><label for="v-cost">Acquisition Cost</label><input type="number" id="v-cost" required></div>
                             </div>
-                            <button type="submit" class="btn-action-submit">Register Vehicle</button>
+                            <button type="submit" class="btn-action-submit" style="margin-top: 10px;">Register Vehicle</button>
                         </form>
                     </div>
-                    <div class="crud-table-card">
-                        <h3>Registered Fleet Matrix</h3>
-                        <div class="table-responsive-wrapper">
-                            <table class="data-table">
-                                <thead>
-                                    <tr><th>Asset / ID</th><th>Reg Code</th><th>Type</th><th>Fuel</th><th>Cap / Seats</th><th>Odometer</th><th>Cost</th><th>Status</th><th>Action</th></tr>
-                                </thead>
-                                <tbody id="vehicle-list-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
                 </div>
+
             </div>
 
-            <!-- VIEW 3: DRIVERS WORKSPACE -->
             <div id="drivers-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
                     <div class="crud-form-card">
@@ -161,7 +175,6 @@
                 </div>
             </div>
 
-            <!-- VIEW 4: TRIP DISPATCHER -->
             <div id="trips-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
                     <div class="crud-form-card">
@@ -190,7 +203,6 @@
                 </div>
             </div>
 
-            <!-- VIEW 5: MAINTENANCE WORKSPACE -->
             <div id="maintenance-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
                     <div class="crud-form-card">
@@ -218,7 +230,6 @@
                 </div>
             </div>
 
-            <!-- VIEW 6: FUEL & EXPENSES MANAGEMENT -->
             <div id="fuel-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row">
                     <div class="crud-form-card">
@@ -253,7 +264,6 @@
                 </div>
             </div>
 
-            <!-- VIEW 7: OPERATIONS ANALYTICS & REPORTS -->
             <div id="analytics-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row" style="display: flex; flex-direction: column; gap: 25px;">
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
@@ -282,83 +292,33 @@
                 </div>
             </div>
 
-            <!-- VIEW 8: SETTINGS & RBAC MATRIX (NEW) -->
             <div id="settings-view" class="view-section" style="display: none;">
                 <div class="crud-layout-row" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; align-items: start;">
-                    
-                    <!-- General Settings Card Options -->
                     <div class="crud-form-card">
                         <h3 style="border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 20px; color: #1e293b; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">General Options</h3>
                         <form id="settings-general-form">
-                            <div class="input-group" style="margin-bottom: 15px;">
-                                <label for="set-depot" style="font-weight: 600; font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Depot Name</label>
-                                <input type="text" id="set-depot" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" required>
-                            </div>
-                            <div class="input-group" style="margin-bottom: 15px;">
-                                <label for="set-currency" style="font-weight: 600; font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Currency</label>
-                                <input type="text" id="set-currency" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" required>
-                            </div>
-                            <div class="input-group" style="margin-bottom: 25px;">
-                                <label for="set-unit" style="font-weight: 600; font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Distance Unit</label>
-                                <input type="text" id="set-unit" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;" required>
-                            </div>
+                            <div class="input-group" style="margin-bottom: 15px;"><label for="set-depot">Depot Name</label><input type="text" id="set-depot" required></div>
+                            <div class="input-group" style="margin-bottom: 15px;"><label for="set-currency">Currency</label><input type="text" id="set-currency" required></div>
+                            <div class="input-group" style="margin-bottom: 25px;"><label for="set-unit">Distance Unit</label><input type="text" id="set-unit" required></div>
                             <button type="submit" class="btn-action-submit" style="background-color: #2563eb; width: auto; padding: 10px 24px;">Save Changes</button>
                         </form>
                     </div>
-
-                    <!-- Role-Based Access Control (RBAC) Matrix View -->
                     <div class="crud-table-card">
                         <h3 style="border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 20px; color: #1e293b; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">Role-Based Access (RBAC)</h3>
                         <div class="table-responsive-wrapper">
                             <table class="data-table" style="text-align: center;">
                                 <thead>
-                                    <tr>
-                                        <th style="text-align: left;">Role Name</th>
-                                        <th>Fleet</th>
-                                        <th>Drivers</th>
-                                        <th>Trips</th>
-                                        <th>Fuel/Exp.</th>
-                                        <th>Analytics</th>
-                                    </tr>
+                                    <tr><th style="text-align: left;">Role Name</th><th>Fleet</th><th>Drivers</th><th>Trips</th><th>Fuel/Exp.</th><th>Analytics</th></tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td style="text-align: left;"><strong>Fleet Manager</strong></td>
-                                        <td style="color: #10b981; font-weight: bold;">✓</td>
-                                        <td style="color: #10b981; font-weight: bold;">✓</td>
-                                        <td style="color: #64748b;">—</td>
-                                        <td style="color: #64748b;">—</td>
-                                        <td style="color: #10b981; font-weight: bold;">✓</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align: left;"><strong>Dispatcher</strong></td>
-                                        <td style="color: #0284c7; font-weight: 500;">view</td>
-                                        <td style="color: #64748b;">—</td>
-                                        <td style="color: #10b981; font-weight: bold;">✓</td>
-                                        <td style="color: #64748b;">—</td>
-                                        <td style="color: #64748b;">—</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align: left;"><strong>Safety Officer</strong></td>
-                                        <td style="color: #64748b;">—</td>
-                                        <td style="color: #10b981; font-weight: bold;">✓</td>
-                                        <td style="color: #0284c7; font-weight: 500;">view</td>
-                                        <td style="color: #64748b;">—</td>
-                                        <td style="color: #64748b;">—</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align: left;"><strong>Financial Analyst</strong></td>
-                                        <td style="color: #0284c7; font-weight: 500;">view</td>
-                                        <td style="color: #64748b;">—</td>
-                                        <td style="color: #64748b;">—</td>
-                                        <td style="color: #10b981; font-weight: bold;">✓</td>
-                                        <td style="color: #10b981; font-weight: bold;">✓</td>
-                                    </tr>
+                                    <tr><td style="text-align: left;"><strong>Fleet Manager</strong></td><td style="color: #10b981; font-weight: bold;">✓</td><td style="color: #10b981; font-weight: bold;">✓</td><td>—</td><td>—</td><td style="color: #10b981; font-weight: bold;">✓</td></tr>
+                                    <tr><td style="text-align: left;"><strong>Dispatcher</strong></td><td style="color: #0284c7;">view</td><td>—</td><td style="color: #10b981; font-weight: bold;">✓</td><td>—</td><td>—</td></tr>
+                                    <tr><td style="text-align: left;"><strong>Safety Officer</strong></td><td>—</td><td style="color: #10b981; font-weight: bold;">✓</td><td style="color: #0284c7;">view</td><td>—</td><td>—</td></tr>
+                                    <tr><td style="text-align: left;"><strong>Financial Analyst</strong></td><td style="color: #0284c7;">view</td><td>—</td><td>—</td><td style="color: #10b981; font-weight: bold;">✓</td><td style="color: #10b981; font-weight: bold;">✓</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>
 

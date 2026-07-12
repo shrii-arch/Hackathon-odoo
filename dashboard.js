@@ -18,10 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 2. UNIFIED TAB NAVIGATION SYSTEM
+    // 2. UNIFIED TAB & KPI NAVIGATION CONTROLLER
     // ==========================================
     const menuItems = document.querySelectorAll('.menu-item');
     const viewSections = document.querySelectorAll('.view-section');
+    const globalKpiGrid = document.getElementById('global-kpi-grid');
 
     menuItems.forEach(item => {
         item.addEventListener('click', function(e) {
@@ -36,6 +37,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 section.style.display = (section.id === targetId) ? "block" : "none";
             });
 
+            // Isolate KPI Visibility specifically to the Home Dashboard view container
+            if (globalKpiGrid) {
+                globalKpiGrid.style.display = (targetId === 'dashboard-view') ? "grid" : "none";
+            }
+
+            if (targetId === 'fleet-view') renderFleetTable();
             if (targetId === 'trips-view') populateDispatchDropdowns();
             if (targetId === 'maintenance-view') {
                 populateMaintenanceDropdown();
@@ -55,10 +62,44 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ==========================================
-    // 3. VEHICLE FLEET MANAGEMENT SYSTEM
+    // 3. FLEET INTERNAL SUB-TAB NAVIGATION
+    // ==========================================
+    const fleetSubTabs = document.querySelectorAll('.fleet-sub-tab');
+    const fleetPanes = document.querySelectorAll('.fleet-pane');
+
+    fleetSubTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            fleetSubTabs.forEach(t => {
+                t.classList.remove('active');
+                t.style.color = '#64748b';
+                t.style.borderBottom = 'none';
+                t.style.fontWeight = '500';
+            });
+            
+            this.classList.add('active');
+            this.style.color = '#2563eb';
+            this.style.borderBottom = '2px solid #2563eb';
+            this.style.fontWeight = '600';
+            this.style.marginBottom = '-12px';
+
+            const activePaneId = this.getAttribute('data-sub');
+            fleetPanes.forEach(pane => {
+                pane.style.display = (pane.id === activePaneId) ? 'block' : 'none';
+            });
+
+            if (activePaneId === 'fleet-matrix-pane') {
+                renderFleetTable();
+            }
+        });
+    });
+
+    // ==========================================
+    // 4. VEHICLE FLEET ENGINE & MATRIX FILTERS
     // ==========================================
     const vehicleForm = document.getElementById('vehicle-form');
     const vehicleListBody = document.getElementById('vehicle-list-body');
+    const filterFleetType = document.getElementById('filter-fleet-type');
+    const filterFleetStatus = document.getElementById('filter-fleet-status');
 
     let fleetDatabase = JSON.parse(localStorage.getItem('transitops_fleet')) || [
         { id: "VAN-05", reg: "GJ01AB4521", type: "Van", fuel: "Diesel", capacity: 500, seats: 2, odometer: 74000, cost: 620000, status: "Available" },
@@ -70,11 +111,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderFleetTable() {
         if (!vehicleListBody) return;
         vehicleListBody.innerHTML = "";
+        
         const currencySymbol = getGlobalCurrencySymbol();
+        const distanceUnit = getGlobalDistanceUnit();
+        const selectedType = filterFleetType ? filterFleetType.value : "All";
+        const selectedStatus = filterFleetStatus ? filterFleetStatus.value : "All";
         
         fleetDatabase.forEach(function(vehicle, index) {
+            // Apply classification multi-selector logical matching
+            if (selectedType !== "All" && vehicle.type !== selectedType) return;
+            if (selectedStatus !== "All" && vehicle.status !== selectedStatus) return;
+
             const formattedCost = vehicle.cost ? Number(vehicle.cost).toLocaleString() : '0';
-            const distanceUnit = getGlobalDistanceUnit();
             
             const rowHTML = `
                 <tr>
@@ -91,9 +139,14 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             vehicleListBody.innerHTML += rowHTML;
         });
+
         localStorage.setItem('transitops_fleet', JSON.stringify(fleetDatabase));
         updateTopKPIGrid();
     }
+
+    // Attach runtime listeners to the type and status filters
+    if (filterFleetType) filterFleetType.addEventListener('change', renderFleetTable);
+    if (filterFleetStatus) filterFleetStatus.addEventListener('change', renderFleetTable);
 
     if (vehicleForm) {
         vehicleForm.addEventListener('submit', function(e) {
@@ -115,7 +168,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 status: "Available"
             });
             vehicleForm.reset();
-            renderFleetTable();
+            
+            // Auto routing flip back to overview pane list upon successful submission
+            const matrixTab = document.querySelector('[data-sub="fleet-matrix-pane"]');
+            if (matrixTab) matrixTab.click();
         });
     }
 
@@ -132,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 4. DRIVER MANAGEMENT SYSTEM
+    // 5. DRIVER MANAGEMENT SYSTEM
     // ==========================================
     const driverForm = document.getElementById('driver-form');
     const driverListBody = document.getElementById('driver-list-body');
@@ -189,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 5. TRIP MANAGEMENT & LOGISTICS ENGINE
+    // 6. TRIP MANAGEMENT & LOGISTICS ENGINE
     // ==========================================
     const tripForm = document.getElementById('trip-form');
     const vehicleSelect = document.getElementById('t-vehicle');
@@ -263,8 +319,6 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('transitops_fleet', JSON.stringify(fleetDatabase));
             localStorage.setItem('transitops_drivers', JSON.stringify(driverDatabase));
             
-            renderFleetTable();
-            renderDriverTable();
             populateDispatchDropdowns();
             renderTripsManagement();
         });
@@ -285,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="route-details">
                         <p class="route-text">📍 <strong>${trip.source}</strong> &rarr; <strong>${trip.destination}</strong></p>
                         <p class="asset-meta">🚛 Asset: <code>${trip.vehicle}</code> / Driver: <strong>${trip.driver}</strong></p>
-                        <p class="log-meta">📦 Cargo: ${trip.weight} kg | 🛣️ Route: ${trip.distance} ${distanceUnit}</p>
+                        <p class="log-meta">📦 Cargo: ${trip.weight} kg | 🛣7 Route: ${trip.distance} ${distanceUnit}</p>
                     </div>
                     <div class="card-actions-row">
                         <select class="status-pipeline-select" data-index="${index}">
@@ -340,8 +394,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('transitops_fleet', JSON.stringify(fleetDatabase));
                 localStorage.setItem('transitops_drivers', JSON.stringify(driverDatabase));
                 
-                renderFleetTable();
-                renderDriverTable();
                 populateDispatchDropdowns();
                 renderTripsManagement();
             }
@@ -349,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 6. VEHICLE MAINTENANCE LOGS MODULE
+    // 7. VEHICLE MAINTENANCE LOGS MODULE
     // ==========================================
     const maintenanceVehicleSelect = document.getElementById('m-vehicle');
     const maintenanceListBody = document.getElementById('maintenance-list-body');
@@ -393,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 7. FUEL & EXPENSES MANAGEMENT MODULE
+    // 8. FUEL & EXPENSES MANAGEMENT MODULE
     // ==========================================
     const expenseForm = document.getElementById('expense-form');
     const expenseVehicleSelect = document.getElementById('e-vehicle');
@@ -475,7 +527,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 8. OPERATIONS ANALYTICS & REPORTS MODULE
+    // 9. OPERATIONS ANALYTICS & REPORTS MODULE
     // ==========================================
     const analyticsUtilizationDisplay = document.getElementById('analytics-utilization-display');
     const analyticsSafetyDisplay = document.getElementById('analytics-safety-display');
@@ -537,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 9. SETTINGS & SYSTEM PREFERENCES ENGINE (NEW MODULE)
+    // 10. SETTINGS & SYSTEM PREFERENCES ENGINE
     // ==========================================
     const settingsForm = document.getElementById('settings-general-form');
     const setDepotInput = document.getElementById('set-depot');
@@ -567,7 +619,6 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('transitops_settings', JSON.stringify(systemPreferences));
             alert("Workspace configuration updated successfully!");
             
-            // Re-render matrices dependent on global unit/currency tokens
             renderFleetTable();
             renderExpenseTable();
             renderMaintenanceTable();
@@ -591,7 +642,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 10. UTILITY HELPER FUNCTIONS
+    // 11. UTILITY HELPER FUNCTIONS
     // ==========================================
     function getTripBadgeClass(status) {
         if (status === "Draft") return "status-draft";
@@ -615,13 +666,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================
-    // 11. GLOBAL RENDER ENGINE BOOT INITIALIZATION
+    // 12. GLOBAL RENDER ENGINE BOOT INITIALIZATION
     // ==========================================
-    renderFleetTable();
-    renderDriverTable();
-    populateMaintenanceDropdown();
-    renderMaintenanceTable();
-    populateExpenseDropdown();
-    renderExpenseTable();
+    renderMirrorHomeDashboard();
     updateTopKPIGrid();
+    
+    // Explicit initial toggle check to ensure KPI values hide if initial reload land isn't home view
+    if (globalKpiGrid) globalKpiGrid.style.display = "grid";
 });
