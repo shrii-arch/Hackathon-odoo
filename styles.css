@@ -85,7 +85,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 60px 40px;
+    padding: 30px 40px;
 }
 
 .form-wrapper {
@@ -94,19 +94,19 @@ body, html {
 }
 
 .form-wrapper h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: #222831;
 }
 
 .subtitle {
     color: #7c838e;
-    margin-bottom: 30px;
-    font-size: 0.95rem;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
 }
 
 /* Forms and Inputs styling */
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .input-group label {
@@ -138,7 +138,7 @@ body, html {
     justify-content: space-between;
     align-items: center;
     font-size: 0.9rem;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .checkbox-container {
@@ -187,20 +187,20 @@ body, html {
 
 /* Lower help text matching wireframe notes */
 .scoped-info {
-    margin-top: 40px;
+    margin-top: 25px;
     border-top: 1px solid #e5e7eb;
-    padding-top: 25px;
+    padding-top: 15px;
     font-size: 0.85rem;
     color: #6b7280;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
 .scoped-info ul {
-    margin-top: 12px;
+    margin-top: 8px;
     list-style-type: none;
     padding-left: 5px;
 }
 
 .scoped-info li {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
